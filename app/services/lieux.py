@@ -4,6 +4,8 @@ import json
 from datetime import date
 from pathlib import Path
 
+from app.services.themes import THEMES
+
 CHEMIN_LIEUX = Path(__file__).resolve().parent.parent / "data" / "lieux.json"
 
 CATEGORIES = ("utile", "logement", "decouverte", "manger")
@@ -12,6 +14,7 @@ CHAMPS = (
     "nom",
     "categorie",
     "sous_categorie",
+    "theme",
     "description",
     "adresse",
     "metro",
@@ -64,6 +67,8 @@ def valider_lieux(lieux: list) -> list:
         vus.add(lieu["id"])
         if lieu["categorie"] not in CATEGORIES:
             raise LieuInvalide(f"Lieu {nom} : catégorie inconnue {lieu['categorie']}.")
+        if lieu["theme"] not in THEMES:
+            raise LieuInvalide(f"Lieu {nom} : thème inconnu {lieu['theme']}.")
         if lieu["photo"] and not lieu["credit_photo"].strip():
             raise LieuInvalide(f"Lieu {nom} : le crédit photo est obligatoire quand il y a une photo.")
         if lieu["lien_carte"] and not lieu["lien_carte"].startswith(PREFIXE_CARTE):

@@ -4,6 +4,8 @@ import json
 from datetime import date
 from pathlib import Path
 
+from app.services.themes import THEMES
+
 CHEMIN_ENTRAIDE = Path(__file__).resolve().parent.parent / "data" / "entraide.json"
 
 JOURS = ("lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche")
@@ -16,6 +18,7 @@ FREQUENCES = ("chaque semaine", "une semaine sur deux", "variable")
 CHAMPS = (
     "nom",
     "type",
+    "theme",
     "description",
     "jour_semaine",
     "frequence",
@@ -46,6 +49,8 @@ def valider_entraide(entrees: list) -> list:
             raise EntraideInvalide(f"Entrée {nom} : champs vides {', '.join(vides)}.")
         if entree["type"] not in TYPES:
             raise EntraideInvalide(f"Entrée {nom} : type inconnu {entree['type']}.")
+        if entree["theme"] not in THEMES:
+            raise EntraideInvalide(f"Entrée {nom} : thème inconnu {entree['theme']}.")
         if entree["jour_semaine"] and entree["jour_semaine"] not in JOURS:
             raise EntraideInvalide(f"Entrée {nom} : jour_semaine doit être un jour en minuscules ou vide.")
         if entree["frequence"] not in FREQUENCES:

@@ -2,6 +2,7 @@
   {
     "code": "visa",
     "titre": "Valider son visa long séjour",
+    "theme": "papiers",
     "statuts": [
       "etudiant",
       "salarie"
@@ -21,6 +22,7 @@
   {
     "code": "securite_sociale",
     "titre": "S'inscrire à la sécurité sociale",
+    "theme": "sante",
     "statuts": [
       "etudiant",
       "salarie",
@@ -41,6 +43,7 @@
   {
     "code": "compte_bancaire",
     "titre": "Ouvrir un compte bancaire",
+    "theme": "banque",
     "statuts": [
       "etudiant",
       "salarie",
@@ -59,6 +62,7 @@
   {
     "code": "aide_logement",
     "titre": "Demander une aide au logement à la CAF",
+    "theme": "logement",
     "statuts": [
       "etudiant",
       "salarie",
@@ -78,6 +82,7 @@
   {
     "code": "medecin_traitant",
     "titre": "Déclarer un médecin traitant",
+    "theme": "sante",
     "statuts": [
       "etudiant",
       "salarie",
@@ -95,6 +100,7 @@
   {
     "code": "assurance_habitation",
     "titre": "Souscrire une assurance habitation",
+    "theme": "logement",
     "statuts": [
       "etudiant",
       "salarie",
