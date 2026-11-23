@@ -1,10 +1,62 @@
 {% extends "base.html" %}
 {% block titre %}Solidarité | Cap90{% endblock %}
+
+{% macro entree_agenda(entree) %}
+{% set libelle, icone = types[entree.type] %}
+<article class="entree">
+  <p class="entree-type"><i class="ti ti-{{ icone }}" aria-hidden="true"></i> {{ libelle }}</p>
+  <h3>{{ entree.nom }}</h3>
+  <p>{{ entree.description }}</p>
+  {% if entree.horaires %}<p class="ligne-info"><i class="ti ti-clock" aria-hidden="true"></i> {{ entree.horaires }}</p>{% endif %}
+  <p class="ligne-info"><i class="ti ti-repeat" aria-hidden="true"></i> Fréquence : {{ entree.frequence }}</p>
+  {% if entree.adresse %}<p class="ligne-info"><i class="ti ti-map-pin" aria-hidden="true"></i> {{ entree.adresse }}</p>{% endif %}
+  {% if entree.conditions %}<p class="ligne-info"><i class="ti ti-user-check" aria-hidden="true"></i> {{ entree.conditions }}</p>{% endif %}
+  {% if entree.lien_inscription %}
+  <a href="{{ entree.lien_inscription }}" target="_blank" rel="noopener noreferrer"><i class="ti ti-external-link" aria-hidden="true"></i> S'inscrire ou se renseigner</a>
+  {% endif %}
+</article>
+{% endmacro %}
+
 {% block contenu %}
+<section class="carte">
+  <h1>Cette semaine à Lille</h1>
+  <p>Aide alimentaire, épiceries solidaires et bénévolat près de chez toi.</p>
+</section>
+
+<div class="agenda">
+  {% for jour in jours %}
+  <section class="carte jour{% if jour == jour_courant %} jour-courant{% endif %}" aria-labelledby="jour-{{ jour }}">
+    <h2 id="jour-{{ jour }}">{{ jour | capitalize }}{% if jour == jour_courant %} <span class="badge badge-aujourdhui">Aujourd'hui</span>{% endif %}</h2>
+    {% for entree in semaine[jour] %}
+      {{ entree_agenda(entree) }}
+    {% else %}
+      <p class="discret">Rien de prévu pour l'instant.</p>
+    {% endfor %}
+  </section>
+  {% endfor %}
+</div>
+
+{% if sans_jour %}
+<section class="carte">
+  <h2>Jour à confirmer</h2>
+  <p class="discret">Le jour de ces rendez-vous n'est pas encore vérifié. Consulte le site de l'association.</p>
+  <div class="grille grille-entrees">
+    {% for entree in sans_jour %}{{ entree_agenda(entree) }}{% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="carte">
+  <h2><i class="ti ti-heart-handshake" aria-hidden="true"></i> Devenir bénévole</h2>
+  <p>Tu as un peu de temps ? Des associations de Lille cherchent des bénévoles, même pour quelques heures.</p>
+  <a class="bouton" href="{{ lien_jeveuxaider }}" target="_blank" rel="noopener noreferrer"><i class="ti ti-external-link" aria-hidden="true"></i> Voir les missions sur JeVeuxAider.gouv.fr</a>
+</section>
+
 <section class="carte attente">
-  <i class="ti ti-heart-handshake icone-grande" aria-hidden="true"></i>
-  <h1>Solidarité</h1>
+  <h2><i class="ti ti-gift" aria-hidden="true"></i> Dons entre habitants</h2>
   <p>Disponible prochainement.</p>
   <p class="discret">Tu pourras donner et recevoir des objets entre habitants.</p>
 </section>
+
+<p class="discret mention-bas"><i class="ti ti-info-circle" aria-hidden="true"></i> Les horaires changent souvent, vérifie sur le site de l'association.</p>
 {% endblock %}

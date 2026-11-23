@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block titre %}Travailler | Cap90{% endblock %}
+{% block contenu %}
+<section class="carte">
+  <h1>Travailler</h1>
+  <p>Suis tes heures et connais tes droits pour travailler pendant tes études.</p>
+</section>
+
+{% if jauge %}
+<section class="carte">
+  <h2>Mes heures de travail</h2>
+  <p class="jauge-texte">Il te reste {{ jauge.restantes }} heures de travail autorisées sur ta période</p>
+  <div class="jauge jauge-{{ jauge.niveau }}" role="progressbar" aria-valuemin="0" aria-valuemax="{{ jauge.plafond }}"
+       aria-valuenow="{{ jauge.total }}" aria-label="Heures travaillées sur la période">
+    <span style="width: {{ jauge.largeur }}%"></span>
+  </div>
+  <p class="jauge-legende">{{ jauge.total }} heures sur {{ jauge.plafond }} ({{ jauge.pourcentage | string | replace('.', ',') }} %)</p>
+  {% if jauge.depassement %}
+  <p class="message-retard"><i class="ti ti-alert-octagon" aria-hidden="true"></i> Tu as dépassé la limite de {{ jauge.depassement }} heures.</p>
+  {% endif %}
+  <p class="discret"><i class="ti ti-calendar" aria-hidden="true"></i> Période en cours : du {{ jauge.debut }} au {{ jauge.fin }}.</p>
+  {% if not jauge.validation_connue %}
+  <p class="discret"><i class="ti ti-info-circle" aria-hidden="true"></i> Coche l'étape de validation du visa dans ton planning. En attendant, la période part de ta date d'arrivée.</p>
+  {% endif %}
+
+  {% if erreurs %}
+  <div class="erreurs" role="alert">
+    <i class="ti ti-alert-circle" aria-hidden="true"></i>
+    <ul>{% for erreur in erreurs %}<li>{{ erreur }}</li>{% endfor %}</ul>
+  </div>
+  {% endif %}
+
+  <form method="post" action="{{ url_for('travail.saisir') }}" class="formulaire formulaire-heures">
+    <div>
+      <label for="mois">Mois</label>
+      <input id="mois" name="mois" type="month" required value="{{ jauge.mois_defaut }}">
+    </div>
+    <div>
+      <label for="heures">Heures travaillées</label>
+      <input id="heures" name="heures" type="number" min="0" max="300" step="0.5" required inputmode="decimal">
+    </div>
+    <button class="bouton" type="submit"><i class="ti ti-device-floppy" aria-hidden="true"></i> Enregistrer</button>
+  </form>
+  <p class="discret">Si tu saisis à nouveau un mois, la nouvelle valeur remplace l'ancienne.</p>
+
+  {% if jauge.saisies %}
+  <table class="tableau-heures">
+    <caption>Heures saisies sur la période</caption>
+    <thead><tr><th scope="col">Mois</th><th scope="col">Heures</th></tr></thead>
+    <tbody>
+      {% for mois, heures in jauge.saisies %}<tr><td>{{ mois }}</td><td>{{ heures }}</td></tr>{% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+</section>
+{% else %}
+<section class="carte">
+  <p>La limite de 964 heures par an concerne les étudiants étrangers. Elle ne s'applique pas à ton statut.</p>
+</section>
+{% endif %}
+
+<section class="carte encadre-retard">
+  <p><i class="ti ti-alert-triangle" aria-hidden="true"></i> <strong>Au-delà de 964 heures par an sans autorisation de travail, ton titre de séjour peut être retiré.</strong></p>
+  <a href="{{ lien_f2713 }}" target="_blank" rel="noopener noreferrer"><i class="ti ti-external-link" aria-hidden="true"></i> Lire la fiche officielle sur service-public.fr</a>
+</section>
+
+<div class="grille">
+  <article class="carte">
+    <h2><i class="ti ti-search" aria-hidden="true"></i> Où chercher un job</h2>
+    <ul>
+      <li>Le service emploi ou stages de ton établissement.</li>
+      <li>Les offres de jobs étudiants publiées par le Crous.</li>
+      <li>Le site de France Travail et les agences d'intérim.</li>
+      <li>Les commerces et restaurants de ton quartier, en déposant ton CV.</li>
+    </ul>
+  </article>
+  <article class="carte">
+    <h2><i class="ti ti-scale" aria-hidden="true"></i> Tes droits de base</h2>
+    <ul>
+      <li>Tu as les mêmes droits que les autres salariés.</li>
+      <li>Tu dois recevoir au moins le salaire minimum (Smic).</li>
+      <li>Demande un contrat de travail écrit et garde tes fiches de paie.</li>
+      <li>Les heures supplémentaires sont payées davantage.</li>
+    </ul>
+  </article>
+  <article class="carte">
+    <h2><i class="ti ti-building-bank" aria-hidden="true"></i> Déclaration à la préfecture</h2>
+    <p>Ton employeur doit déclarer ton embauche à la préfecture avant ton premier jour de travail.</p>
+    <p>Demande-lui une confirmation de cette déclaration et garde-la avec tes justificatifs.</p>
+    <p class="discret">Les règles exactes sont à vérifier sur la fiche officielle.</p>
+  </article>
+</div>
+{% endblock %}

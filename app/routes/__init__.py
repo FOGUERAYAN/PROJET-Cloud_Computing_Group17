@@ -8,9 +8,20 @@ from app.routes.medias import bp as medias_bp
 from app.routes.planning import bp as planning_bp
 from app.routes.profil import bp as profil_bp
 from app.routes.solidarite import bp as solidarite_bp
+from app.routes.travail import bp as travail_bp
 from app.services.lieux import ICONES, premiere_phrase
 
-BLUEPRINTS = (accueil_bp, profil_bp, planning_bp, lille_bp, medias_bp, coffre_bp, solidarite_bp, health_bp)
+BLUEPRINTS = (
+    accueil_bp,
+    profil_bp,
+    planning_bp,
+    lille_bp,
+    medias_bp,
+    travail_bp,
+    coffre_bp,
+    solidarite_bp,
+    health_bp,
+)
 
 
 def enregistrer_routes(app):

@@ -578,3 +578,169 @@ legend {
 .ou-aller p {
   margin: 2px 0;
 }
+
+/* Solidarité : agenda de la semaine, une liste par jour sur mobile, sept colonnes sur ordinateur */
+.agenda {
+  display: grid;
+  gap: var(--espace);
+  margin-bottom: var(--espace);
+}
+
+.agenda .jour {
+  margin-bottom: 0;
+}
+
+.jour h2 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.jour-courant {
+  border: 2px solid var(--couleur-primaire);
+}
+
+.badge-aujourdhui {
+  border-color: var(--couleur-primaire);
+  background: var(--couleur-primaire);
+  color: var(--couleur-surface);
+}
+
+.entree {
+  padding-top: 8px;
+  margin-top: 8px;
+  border-top: 1px solid var(--couleur-bordure);
+}
+
+.entree h3 {
+  margin: 4px 0;
+  font-family: var(--police-titre);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.entree-type {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.grille-entrees .entree {
+  border-top: 0;
+}
+
+.mention-bas {
+  text-align: center;
+}
+
+@media (min-width: 1000px) {
+  .contenu:has(.agenda) {
+    max-width: 1280px;
+  }
+
+  .agenda {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .agenda .jour {
+    padding: 12px;
+  }
+}
+
+/* Travailler : jauge des 964 heures */
+.jauge {
+  height: 14px;
+  margin: 12px 0 6px;
+  border-radius: 7px;
+  background: var(--couleur-bordure);
+  overflow: hidden;
+}
+
+.jauge span {
+  display: block;
+  height: 100%;
+}
+
+.jauge-normal span {
+  background: var(--couleur-primaire);
+}
+
+.jauge-alerte span {
+  background: var(--couleur-alerte);
+}
+
+.jauge-retard span {
+  background: var(--couleur-retard);
+}
+
+.jauge-texte {
+  font-family: var(--police-titre);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.jauge-legende {
+  margin: 0 0 8px;
+  font-weight: 500;
+}
+
+.message-retard {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--couleur-retard);
+  color: var(--couleur-surface);
+  font-weight: 500;
+}
+
+.formulaire-heures {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.formulaire-heures > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 140px;
+}
+
+.formulaire-heures label {
+  font-weight: 500;
+}
+
+.tableau-heures {
+  width: 100%;
+  margin-top: 12px;
+  border-collapse: collapse;
+}
+
+.tableau-heures caption {
+  text-align: left;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.tableau-heures th,
+.tableau-heures td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--couleur-bordure);
+  text-align: left;
+}
+
+.encadre-retard {
+  border: 2px solid var(--couleur-retard);
+}
+
+.encadre-retard .ti-alert-triangle {
+  color: var(--couleur-retard);
+}
+
+/* Cinq onglets sur mobile : libellés plus compacts */
+@media (max-width: 720px) {
+  .barre-onglets a {
+    font-size: 0.7rem;
+  }
+}

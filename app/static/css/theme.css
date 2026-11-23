@@ -7,6 +7,7 @@
   --couleur-alerte: #F2B134;       /* échéances proches ; texte bleu nuit dessus */
   --couleur-alerte-texte: #B7791F; /* icônes d'alerte sur fond blanc */
   --couleur-bordure: #E2E5EC;
+  --couleur-retard: #C53030;       /* dépassement de limite ; texte blanc dessus */
 
   --police-titre: "Poppins", system-ui, sans-serif;
   --police-texte: "Inter", system-ui, sans-serif;
