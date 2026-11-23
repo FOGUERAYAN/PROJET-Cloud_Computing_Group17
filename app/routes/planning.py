@@ -59,9 +59,11 @@ def basculer(code):
         return redirect(url_for("profil.formulaire"))
 
     stockage = current_app.extensions["stockage"]
-    etape = next((e for e in stockage.lister_etapes(id_utilisateur) if e["RowKey"] == code), None)
+    etape = stockage.lire_etape(id_utilisateur, code)
     if etape is None:
         abort(404)
-    nouveau = "a_faire" if etape["statut"] == "fait" else "fait"
-    stockage.changer_statut_etape(id_utilisateur, code, nouveau)
+    if etape["statut"] == "fait":
+        stockage.changer_statut_etape(id_utilisateur, code, "a_faire")
+    else:
+        stockage.changer_statut_etape(id_utilisateur, code, "fait", aujourd_hui().isoformat())
     return redirect(url_for("planning.index") + f"#{code}")

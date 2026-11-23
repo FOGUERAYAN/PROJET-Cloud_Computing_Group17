@@ -12,7 +12,8 @@ from abc import ABC, abstractmethod
 TABLE_PROFILS = "profils"
 TABLE_ETAPES = "etapes"
 TABLE_ANNONCES = "annonces"
-TABLES = (TABLE_PROFILS, TABLE_ETAPES, TABLE_ANNONCES)
+TABLE_HEURES = "heures"
+TABLES = (TABLE_PROFILS, TABLE_ETAPES, TABLE_ANNONCES, TABLE_HEURES)
 
 CONTENEUR_MEDIAS = "medias-lille"
 
@@ -73,11 +74,23 @@ class Stockage(ABC):
         etapes = self._lister(TABLE_ETAPES, id_utilisateur)
         return sorted(etapes, key=lambda e: e["ordre"])
 
-    def changer_statut_etape(self, id_utilisateur: str, code: str, statut: str) -> bool:
+    def lire_etape(self, id_utilisateur: str, code: str) -> dict | None:
+        return self._lire(TABLE_ETAPES, id_utilisateur, code)
+
+    def changer_statut_etape(self, id_utilisateur: str, code: str, statut: str, fait_le: str = "") -> bool:
+        """Change le statut d'une étape. fait_le garde la date (AAAA-MM-JJ) où elle a été cochée."""
         if self._lire(TABLE_ETAPES, id_utilisateur, code) is None:
             return False
-        self._ecrire(TABLE_ETAPES, {"PartitionKey": id_utilisateur, "RowKey": code, "statut": statut})
+        entite = {"PartitionKey": id_utilisateur, "RowKey": code, "statut": statut, "fait_le": fait_le}
+        self._ecrire(TABLE_ETAPES, entite)
         return True
+
+    def enregistrer_heures(self, id_utilisateur: str, mois: str, heures: float) -> None:
+        """Heures travaillées pendant un mois (AAAA-MM). Remplace la valeur précédente."""
+        self._ecrire(TABLE_HEURES, {"PartitionKey": id_utilisateur, "RowKey": mois, "heures": float(heures)})
+
+    def lister_heures(self, id_utilisateur: str) -> dict[str, float]:
+        return {e["RowKey"]: float(e["heures"]) for e in self._lister(TABLE_HEURES, id_utilisateur)}
 
 
 class StockageMemoire(Stockage):
