@@ -52,8 +52,8 @@ def test_profil_invalide_refuse(client, stockage):
     reponse = client.post("/profil", data={**FORMULAIRE, "statut": "inconnu", "date_arrivee": "pas-une-date"})
     assert reponse.status_code == 400
     texte = reponse.get_data(as_text=True)
-    assert "Choisissez un statut." in texte
-    assert "Indiquez une date d&#39;arrivée valide." in texte
+    assert "Choisis un statut." in texte
+    assert "Indique une date d&#39;arrivée valide." in texte
     assert stockage.tables[TABLE_PROFILS] == {}
 
 
@@ -89,3 +89,10 @@ def test_case_fait_bascule_le_statut(client, stockage):
     assert etapes["visa"]["statut"] == "a_faire"
 
     assert client.post("/planning/inconnu/fait").status_code == 404
+
+
+def test_planning_affiche_ou_aller(client):
+    client.post("/profil", data=FORMULAIRE)
+    texte = client.get("/planning").get_data(as_text=True)
+    assert texte.count("Où aller") == 1  # seule la sécurité sociale a un lieu avec adresse
+    assert "CPAM de Lille-Douai, 2 rue d&#39;Iéna, Lille" in texte
