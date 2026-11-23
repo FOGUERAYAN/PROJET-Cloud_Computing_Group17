@@ -16,6 +16,7 @@ from app.services.entraide import (
 ENTREE = {
     "nom": "Association de test",
     "type": "aide_alimentaire",
+    "theme": "entraide",
     "description": "Une distribution.",
     "jour_semaine": "mardi",
     "frequence": "chaque semaine",

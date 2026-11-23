@@ -17,6 +17,7 @@ LIEU = {
     "nom": "Lieu de test",
     "categorie": "decouverte",
     "sous_categorie": "a_voir",
+    "theme": "bons-plans",
     "description": "Première phrase. Deuxième phrase.",
     "adresse": "",
     "metro": "",
