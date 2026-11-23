@@ -1,24 +1,31 @@
 # Cap90
 
-Cap90 aide les nouveaux arrivants en France pendant leurs 90 premiers jours.
+Cap90 aide les étudiants qui arrivent dans la Métropole Européenne de Lille pendant leurs 90 premiers jours.
 L'utilisateur répond à 5 questions et obtient un rétroplanning daté de ses démarches administratives.
 Un coffre-fort de justificatifs et un espace de dons entre habitants arriveront ensuite.
 
 Projet de Cloud Computing, JUNIA ISEN. L'application tourne dans un conteneur Docker sur une VM Azure,
 derrière un Load Balancer. Elle utilise Azure Table Storage et Azure Blob Storage via une Managed Identity.
 
-## Fonctionnalités de ce squelette
+## Fonctionnalités
 
 - Accueil avec un bouton "Créer mon profil".
 - Profil en 5 questions (statut, ville, date d'arrivée, langue maternelle, centres d'intérêt), sans mot de passe.
   L'identifiant utilisateur est gardé dans la session Flask.
 - Planning : jour courant ("Jour 12 sur 90"), étapes avec date limite, jours restants, case "fait",
   pièces à fournir et lien officiel. Une étape à moins de 7 jours est signalée avec la couleur d'alerte.
+- Planning : bloc "Où aller" (adresse et métro) quand la démarche est liée à un lieu (`lieu_id`).
+- Lille : lieux utiles, se loger (sites recommandés et fiche anti-arnaques), découvrir Lille
+  (filtres à voir, manger pas cher, sortir, et page de détail).
+- `/medias/<nom>` : photos lues dans le conteneur Blob privé `medias-lille`, avec un cache HTTP d'un jour.
+  Sans photo, un bloc de couleur avec l'icône de la catégorie s'affiche.
 - Coffre-fort et Solidarité : pages d'attente.
 - `/health` : renvoie `{"status": "ok"}` sans accéder au stockage (sonde du Load Balancer).
 
 Les délais du catalogue (`app/data/demarches.json`) sont indicatifs et marqués `"a_verifier": true`.
 Ils doivent être vérifiés sur service-public.fr.
+De même, les lieux (`app/data/lieux.json`) sont marqués `"a_verifier": true` : les champs dont on n'est pas sûr
+(adresse, métro, prix) sont laissés vides et doivent être complétés.
 
 ## Arborescence
 
@@ -26,13 +33,16 @@ Ils doivent être vérifiés sur service-public.fr.
 app/
   __init__.py        create_app()
   config.py          lecture des variables d'environnement
-  routes/            accueil, profil, planning, coffre, solidarite, health
+  routes/            accueil, profil, planning, lille, medias, coffre, solidarite, health
   services/
     planning.py      calcul du rétroplanning (fonctions pures)
-    storage.py       interface de stockage, implémentations Azure Tables et mémoire
-  data/              catalogue des démarches
+    lieux.py         chargement, validation et filtres des lieux
+    storage.py       interface de stockage, implémentations Azure (Tables et Blob) et mémoire
+  data/              catalogue des démarches et des lieux
   templates/         pages Jinja
   static/css/        theme.css (palette) et app.css (mise en page)
+medias/              photos à envoyer dans le conteneur Blob
+scripts/             charger_medias.py
 function/            future Azure Function (vide)
 tests/               tests pytest, avec le stockage en mémoire
 ```
@@ -69,6 +79,21 @@ sont créées au démarrage de l'application. Les données sont conservées dans
 
 La connexion locale utilise uniquement `UseDevelopmentStorage=true`. Comme cette chaîne vise `127.0.0.1`,
 le conteneur de l'application partage le réseau du conteneur Azurite (`network_mode: service:azurite`).
+
+## Ajouter une photo
+
+1. Déposer le fichier dans `medias/` (jpg, jpeg, png ou webp, nom sans accent ni espace, par exemple `grand-place.jpg`).
+2. Dans `app/data/lieux.json`, remplir `photo` avec le nom du fichier et `credit_photo` avec l'auteur et la licence.
+   L'application refuse de démarrer si une photo n'a pas de crédit.
+3. Avec docker compose lancé, envoyer les photos dans Azurite depuis l'environnement virtuel :
+
+   ```
+   python scripts/charger_medias.py
+   ```
+
+   Puis relancer l'application (`docker compose up --build -d`) pour qu'elle relise `lieux.json`.
+
+Le conteneur `medias-lille` est privé : les images passent toujours par la route `/medias/<nom>`.
 
 ## Lancer les tests
 
