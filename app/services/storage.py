@@ -1,10 +1,10 @@
-"""Accès aux tables. Une interface commune et deux implémentations.
+"""Accès aux données. Une interface commune et deux implémentations.
 
 - StockageMemoire : dictionnaires en mémoire, utilisé par les tests.
-- StockageAzureTables : Azure Table Storage (ou l'émulateur Azurite en local).
+- StockageAzure : Azure Table Storage et Blob Storage (ou l'émulateur Azurite en local).
 
 La logique métier (profils, étapes) est écrite une seule fois dans la classe de base.
-Chaque implémentation ne fournit que trois opérations élémentaires.
+Chaque implémentation ne fournit que les opérations élémentaires.
 """
 
 from abc import ABC, abstractmethod
@@ -13,6 +13,8 @@ TABLE_PROFILS = "profils"
 TABLE_ETAPES = "etapes"
 TABLE_ANNONCES = "annonces"
 TABLES = (TABLE_PROFILS, TABLE_ETAPES, TABLE_ANNONCES)
+
+CONTENEUR_MEDIAS = "medias-lille"
 
 PARTITION_PROFIL = "profil"
 
@@ -23,8 +25,8 @@ class Stockage(ABC):
     # Opérations élémentaires à fournir par chaque implémentation.
 
     @abstractmethod
-    def creer_tables(self) -> None:
-        """Crée les tables si elles n'existent pas."""
+    def initialiser(self) -> None:
+        """Crée les tables et le conteneur de médias s'ils n'existent pas."""
 
     @abstractmethod
     def _ecrire(self, table: str, entite: dict) -> None:
@@ -37,6 +39,14 @@ class Stockage(ABC):
     @abstractmethod
     def _lister(self, table: str, partition: str) -> list[dict]:
         """Retourne toutes les entités d'une partition."""
+
+    @abstractmethod
+    def envoyer_media(self, nom: str, contenu: bytes, type_contenu: str) -> None:
+        """Enregistre un fichier dans le conteneur de médias (remplace s'il existe)."""
+
+    @abstractmethod
+    def lire_media(self, nom: str) -> tuple[bytes, str] | None:
+        """Retourne (contenu, type) d'un média, ou None s'il n'existe pas."""
 
     # Opérations métier communes.
 
@@ -75,8 +85,9 @@ class StockageMemoire(Stockage):
 
     def __init__(self):
         self.tables: dict[str, dict[tuple[str, str], dict]] = {}
+        self.medias: dict[str, tuple[bytes, str]] = {}
 
-    def creer_tables(self) -> None:
+    def initialiser(self) -> None:
         for nom in TABLES:
             self.tables.setdefault(nom, {})
 
@@ -92,50 +103,88 @@ class StockageMemoire(Stockage):
     def _lister(self, table, partition):
         return [dict(e) for (pk, _), e in self.tables[table].items() if pk == partition]
 
+    def envoyer_media(self, nom, contenu, type_contenu):
+        self.medias[nom] = (contenu, type_contenu)
 
-class StockageAzureTables(Stockage):
-    """Implémentation Azure Table Storage (ou Azurite)."""
+    def lire_media(self, nom):
+        return self.medias.get(nom)
 
-    def __init__(self, service):
-        self.service = service
+
+class StockageAzure(Stockage):
+    """Implémentation Azure Table Storage et Blob Storage (ou Azurite)."""
+
+    def __init__(self, service_tables, service_blobs):
+        self.service_tables = service_tables
+        self.service_blobs = service_blobs
 
     @classmethod
-    def depuis_chaine_connexion(cls, chaine: str) -> "StockageAzureTables":
+    def depuis_chaine_connexion(cls, chaine: str) -> "StockageAzure":
         """Connexion locale, par exemple avec UseDevelopmentStorage=true (Azurite)."""
         from azure.data.tables import TableServiceClient
+        from azure.storage.blob import BlobServiceClient
 
-        return cls(TableServiceClient.from_connection_string(chaine))
+        return cls(
+            TableServiceClient.from_connection_string(chaine),
+            BlobServiceClient.from_connection_string(chaine),
+        )
 
     @classmethod
-    def depuis_identite(cls, nom_compte: str) -> "StockageAzureTables":
+    def depuis_identite(cls, nom_compte: str) -> "StockageAzure":
         """Connexion sur Azure avec la Managed Identity, sans aucune clé."""
         from azure.data.tables import TableServiceClient
         from azure.identity import DefaultAzureCredential
+        from azure.storage.blob import BlobServiceClient
 
-        point_acces = f"https://{nom_compte}.table.core.windows.net"
-        return cls(TableServiceClient(endpoint=point_acces, credential=DefaultAzureCredential()))
+        identite = DefaultAzureCredential()
+        return cls(
+            TableServiceClient(endpoint=f"https://{nom_compte}.table.core.windows.net", credential=identite),
+            BlobServiceClient(account_url=f"https://{nom_compte}.blob.core.windows.net", credential=identite),
+        )
 
-    def creer_tables(self) -> None:
+    def initialiser(self) -> None:
+        from azure.core.exceptions import ResourceExistsError
+
         for nom in TABLES:
-            self.service.create_table_if_not_exists(nom)
+            self.service_tables.create_table_if_not_exists(nom)
+        try:
+            # Conteneur privé : aucun accès public, les images passent par /medias.
+            self.service_blobs.create_container(CONTENEUR_MEDIAS)
+        except ResourceExistsError:
+            pass
 
     def _ecrire(self, table, entite):
         from azure.data.tables import UpdateMode
 
-        self.service.get_table_client(table).upsert_entity(entite, mode=UpdateMode.MERGE)
+        self.service_tables.get_table_client(table).upsert_entity(entite, mode=UpdateMode.MERGE)
 
     def _lire(self, table, partition, ligne):
         from azure.core.exceptions import ResourceNotFoundError
 
         try:
-            return dict(self.service.get_table_client(table).get_entity(partition, ligne))
+            return dict(self.service_tables.get_table_client(table).get_entity(partition, ligne))
         except ResourceNotFoundError:
             return None
 
     def _lister(self, table, partition):
-        client = self.service.get_table_client(table)
+        client = self.service_tables.get_table_client(table)
         entites = client.query_entities("PartitionKey eq @pk", parameters={"pk": partition})
         return [dict(e) for e in entites]
+
+    def envoyer_media(self, nom, contenu, type_contenu):
+        from azure.storage.blob import ContentSettings
+
+        blob = self.service_blobs.get_blob_client(CONTENEUR_MEDIAS, nom)
+        blob.upload_blob(contenu, overwrite=True, content_settings=ContentSettings(content_type=type_contenu))
+
+    def lire_media(self, nom):
+        from azure.core.exceptions import ResourceNotFoundError
+
+        blob = self.service_blobs.get_blob_client(CONTENEUR_MEDIAS, nom)
+        try:
+            telechargement = blob.download_blob()
+        except ResourceNotFoundError:
+            return None
+        return telechargement.readall(), telechargement.properties.content_settings.content_type
 
 
 def creer_stockage(config) -> Stockage:
@@ -145,7 +194,7 @@ def creer_stockage(config) -> Stockage:
     if config.STORAGE_MODE == "azurite":
         if not config.AZURE_STORAGE_CONNECTION_STRING:
             raise ValueError("AZURE_STORAGE_CONNECTION_STRING est obligatoire en mode azurite.")
-        return StockageAzureTables.depuis_chaine_connexion(config.AZURE_STORAGE_CONNECTION_STRING)
+        return StockageAzure.depuis_chaine_connexion(config.AZURE_STORAGE_CONNECTION_STRING)
     if not config.AZURE_STORAGE_ACCOUNT_NAME:
         raise ValueError("AZURE_STORAGE_ACCOUNT_NAME est obligatoire en mode azure.")
-    return StockageAzureTables.depuis_identite(config.AZURE_STORAGE_ACCOUNT_NAME)
+    return StockageAzure.depuis_identite(config.AZURE_STORAGE_ACCOUNT_NAME)

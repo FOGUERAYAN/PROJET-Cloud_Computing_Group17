@@ -4,6 +4,7 @@ from flask import Flask
 
 from app.config import Config
 from app.routes import enregistrer_routes
+from app.services.lieux import charger_lieux
 from app.services.planning import charger_catalogue
 from app.services.storage import creer_stockage
 
@@ -22,9 +23,10 @@ def create_app(config=None, stockage=None):
 
     if stockage is None:
         stockage = creer_stockage(config)
-    stockage.creer_tables()
+    stockage.initialiser()
     app.extensions["stockage"] = stockage
     app.extensions["catalogue"] = charger_catalogue()
+    app.extensions["lieux"] = charger_lieux()
 
     enregistrer_routes(app)
     return app
