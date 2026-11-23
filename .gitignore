@@ -1,0 +1,24 @@
+# Secrets et configuration locale
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Azurite lancé hors Docker
+__azurite_db_*
+__blobstorage__/
+__queuestorage__/
+
+# Éditeurs et système
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
