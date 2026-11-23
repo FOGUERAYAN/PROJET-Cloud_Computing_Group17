@@ -12,8 +12,8 @@
     "credit_photo": ""
   },
   "decouvrir": {
-    "photo_bandeau": "",
-    "credit_photo": ""
+    "photo_bandeau": "bandeau-decouvrir.jpg",
+    "credit_photo": "Velvet, CC BY-SA 4.0, via Wikimedia Commons"
   },
   "solidarite": {
     "photo_bandeau": "",

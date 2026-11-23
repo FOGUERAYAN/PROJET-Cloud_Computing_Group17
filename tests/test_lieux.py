@@ -159,7 +159,10 @@ def test_detail_lieu(client):
     assert client.get("/lille/decouvrir/cpam").status_code == 404
 
 
-def test_photo_absente_affiche_bloc_icone(client):
+def test_photo_absente_affiche_bloc_icone(app, client):
+    # Tous les lieux de Découvrir ont une photo : on en retire une, en mémoire seulement.
+    citadelle = next(x for x in app.extensions["lieux"] if x["id"] == "citadelle")
+    citadelle.update(photo="", credit_photo="")
     texte = client.get("/lille/decouvrir/citadelle").get_data(as_text=True)
     assert 'class="photo-absente"' in texte
     assert "<img" not in texte

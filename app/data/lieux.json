@@ -119,8 +119,8 @@
     "metro": "",
     "lien_officiel": "",
     "lien_carte": "https://www.openstreetmap.org/search?query=Citadelle%20de%20Lille",
-    "photo": "",
-    "credit_photo": "",
+    "photo": "citadelle.jpg",
+    "credit_photo": "Velvet, CC BY-SA 4.0, via Wikimedia Commons",
     "prix_indicatif": "",
     "verifie_le": "",
     "a_verifier": true
@@ -191,8 +191,8 @@
     "metro": "",
     "lien_officiel": "https://www.crous-lille.fr",
     "lien_carte": "",
-    "photo": "",
-    "credit_photo": "",
+    "photo": "restaurants_crous.jpg",
+    "credit_photo": "Jiel Beaumadier (jiel.b.free.fr), CC BY-SA 3.0, via Wikimedia Commons",
     "prix_indicatif": "",
     "verifie_le": "",
     "a_verifier": true
