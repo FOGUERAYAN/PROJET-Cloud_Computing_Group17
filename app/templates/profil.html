@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block titre %}Mon profil | Cap90{% endblock %}
+{% block contenu %}
+<section class="carte">
+  <h1>Mon profil</h1>
+  <p class="discret">Pas de mot de passe. Votre profil est lié à ce navigateur.</p>
+
+  {% if erreurs %}
+  <div class="erreurs" role="alert">
+    <i class="ti ti-alert-circle" aria-hidden="true"></i>
+    <ul>{% for erreur in erreurs %}<li>{{ erreur }}</li>{% endfor %}</ul>
+  </div>
+  {% endif %}
+
+  <form method="post" action="{{ url_for('profil.creer') }}" class="formulaire">
+    <label for="pseudo">Pseudo (facultatif)</label>
+    <input id="pseudo" name="pseudo" maxlength="40" value="{{ valeurs.pseudo or '' }}">
+
+    <fieldset>
+      <legend>1. Quel est votre statut ?</legend>
+      {% for code, libelle in statuts.items() %}
+      <label class="choix">
+        <input type="radio" name="statut" value="{{ code }}" required {% if valeurs.statut == code %}checked{% endif %}>
+        {{ libelle }}
+      </label>
+      {% endfor %}
+    </fieldset>
+
+    <label for="ville">2. Dans quelle ville habitez-vous ?</label>
+    <input id="ville" name="ville" maxlength="80" required value="{{ valeurs.ville or '' }}">
+
+    <label for="date_arrivee">3. Quelle est votre date d'arrivée en France ?</label>
+    <input id="date_arrivee" name="date_arrivee" type="date" required value="{{ valeurs.date_arrivee or '' }}">
+
+    <label for="langue">4. Quelle est votre langue maternelle ?</label>
+    <input id="langue" name="langue" maxlength="40" required value="{{ valeurs.langue or '' }}">
+
+    <fieldset>
+      <legend>5. Quels sont vos centres d'intérêt ?</legend>
+      {% for code, libelle in interets.items() %}
+      <label class="choix">
+        <input type="checkbox" name="interets" value="{{ code }}" {% if code in (valeurs.interets or []) %}checked{% endif %}>
+        {{ libelle }}
+      </label>
+      {% endfor %}
+    </fieldset>
+
+    <button class="bouton" type="submit"><i class="ti ti-calendar-plus" aria-hidden="true"></i> Créer mon planning</button>
+  </form>
+</section>
+{% endblock %}

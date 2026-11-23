@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block titre %}Mon planning | Cap90{% endblock %}
+{% block contenu %}
+<section class="carte">
+  <p class="discret">{% if profil.pseudo %}{{ profil.pseudo }}, {% endif %}{{ profil.ville }}</p>
+  <h1>Jour {{ jour }} sur {{ duree }}</h1>
+  <div class="progression" role="progressbar" aria-valuemin="1" aria-valuemax="{{ duree }}" aria-valuenow="{{ jour }}">
+    <span style="width: {{ (jour / duree * 100) | round(1) }}%"></span>
+  </div>
+  <p class="discret"><i class="ti ti-info-circle" aria-hidden="true"></i> Les délais sont indicatifs et restent à vérifier sur service-public.fr.</p>
+</section>
+
+<ol class="etapes">
+  {% for etape in etapes %}
+  <li id="{{ etape.code }}" class="carte etape{% if etape.fait %} fait{% elif etape.urgente %} urgente{% endif %}">
+    <div class="etape-entete">
+      <form method="post" action="{{ url_for('planning.basculer', code=etape.code) }}">
+        <button class="case" type="submit" aria-pressed="{{ 'true' if etape.fait else 'false' }}"
+                aria-label="{{ 'Marquer comme à faire' if etape.fait else 'Marquer comme fait' }}">
+          {% if etape.fait %}<i class="ti ti-check" aria-hidden="true"></i>{% endif %}
+        </button>
+      </form>
+      <h2>{{ etape.titre }}</h2>
+    </div>
+
+    <p class="echeance">
+      {% if etape.urgente %}<i class="ti ti-alert-triangle icone-alerte" aria-hidden="true"></i>{% else %}<i class="ti ti-clock" aria-hidden="true"></i>{% endif %}
+      Avant le {{ etape.date_limite }}
+      {% if etape.fait %}
+        <span class="badge badge-fait">Fait</span>
+      {% elif etape.jours_restants < 0 %}
+        <span class="badge badge-alerte">Dépassée de {{ -etape.jours_restants }} jour{{ 's' if -etape.jours_restants > 1 }}</span>
+      {% elif etape.urgente %}
+        <span class="badge badge-alerte">{{ etape.jours_restants }} jour{{ 's' if etape.jours_restants > 1 }} restant{{ 's' if etape.jours_restants > 1 }}</span>
+      {% else %}
+        <span class="badge">{{ etape.jours_restants }} jours restants</span>
+      {% endif %}
+    </p>
+
+    {% if etape.pieces %}
+    <p class="sous-titre">Pièces à préparer</p>
+    <ul class="pieces">{% for piece in etape.pieces %}<li>{{ piece }}</li>{% endfor %}</ul>
+    {% endif %}
+    {% if etape.conseil %}<p class="conseil"><i class="ti ti-bulb" aria-hidden="true"></i> {{ etape.conseil }}</p>{% endif %}
+    {% if etape.lien_officiel %}
+    <a href="{{ etape.lien_officiel }}" target="_blank" rel="noopener noreferrer"><i class="ti ti-external-link" aria-hidden="true"></i> Site officiel</a>
+    {% endif %}
+  </li>
+  {% else %}
+  <li class="carte">Aucune démarche pour ce statut.</li>
+  {% endfor %}
+</ol>
+{% endblock %}

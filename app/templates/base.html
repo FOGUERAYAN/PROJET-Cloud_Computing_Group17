@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titre %}Cap90{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Poppins:wght@500;600&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+  <header class="entete">
+    <a class="logo" href="{{ url_for('accueil.index') }}"><i class="ti ti-compass" aria-hidden="true"></i> Cap90</a>
+    <nav class="navigation" aria-label="Navigation principale">
+      <a href="{{ url_for('planning.index') }}"><i class="ti ti-calendar-event" aria-hidden="true"></i> Planning</a>
+      <a href="{{ url_for('coffre.index') }}"><i class="ti ti-lock" aria-hidden="true"></i> Coffre-fort</a>
+      <a href="{{ url_for('solidarite.index') }}"><i class="ti ti-heart-handshake" aria-hidden="true"></i> Solidarité</a>
+    </nav>
+  </header>
+  <main class="contenu">
+    {% block contenu %}{% endblock %}
+  </main>
+  <footer class="pied">Cap90, vos 90 premiers jours en France.</footer>
+</body>
+</html>

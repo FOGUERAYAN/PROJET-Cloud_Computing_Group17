@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block contenu %}
+<section class="carte accueil">
+  <h1>Bienvenue sur Cap90</h1>
+  <p>Cap90 vous accompagne pendant vos 90 premiers jours en France.</p>
+  <p>Répondez à 5 questions et obtenez un planning daté de vos démarches.</p>
+  <a class="bouton" href="{{ url_for('profil.formulaire') }}"><i class="ti ti-user-plus" aria-hidden="true"></i> Créer mon profil</a>
+</section>
+{% endblock %}

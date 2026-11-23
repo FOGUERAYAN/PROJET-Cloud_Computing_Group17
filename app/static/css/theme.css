@@ -1,0 +1,16 @@
+/* Charte graphique Cap90, palette Clarté. Seul fichier qui contient des couleurs. */
+:root {
+  --couleur-texte: #26315C;        /* bleu nuit, texte et titres */
+  --couleur-fond: #F7F8FA;         /* fond des pages */
+  --couleur-surface: #FFFFFF;      /* cartes */
+  --couleur-primaire: #3D5AFE;     /* boutons, liens, étapes faites ; texte blanc dessus */
+  --couleur-alerte: #F2B134;       /* échéances proches ; texte bleu nuit dessus */
+  --couleur-alerte-texte: #B7791F; /* icônes d'alerte sur fond blanc */
+  --couleur-bordure: #E2E5EC;
+
+  --police-titre: "Poppins", system-ui, sans-serif;
+  --police-texte: "Inter", system-ui, sans-serif;
+
+  --rayon: 12px;
+  --espace: 16px;
+}
