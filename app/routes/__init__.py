@@ -1,8 +1,10 @@
 """Enregistrement des blueprints et des aides de templates."""
 
+from app.routes import commun
 from app.routes.accueil import bp as accueil_bp
 from app.routes.coffre import bp as coffre_bp
 from app.routes.health import bp as health_bp
+from app.routes.liens import bp as liens_bp
 from app.routes.lille import bp as lille_bp
 from app.routes.medias import bp as medias_bp
 from app.routes.planning import bp as planning_bp
@@ -16,6 +18,7 @@ BLUEPRINTS = (
     profil_bp,
     planning_bp,
     lille_bp,
+    liens_bp,
     medias_bp,
     travail_bp,
     coffre_bp,
@@ -29,3 +32,4 @@ def enregistrer_routes(app):
         app.register_blueprint(blueprint)
     app.jinja_env.globals["icones_categories"] = ICONES
     app.jinja_env.filters["premiere_phrase"] = premiere_phrase
+    commun.installer(app)

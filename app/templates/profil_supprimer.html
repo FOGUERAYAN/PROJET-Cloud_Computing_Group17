@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from "_macros.html" import bandeau %}
+{% block titre %}Supprimer mes données | Cap90{% endblock %}
+{% block bandeau %}{{ bandeau("Supprimer mes données", "Cette action est définitive.") }}{% endblock %}
+
+{% block contenu %}
+<section class="carte carte-formulaire zone-danger">
+  <h2><i class="ti ti-alert-triangle icone-retard" aria-hidden="true"></i> Es-tu sûr de vouloir tout supprimer ?</h2>
+  <p>Seront effacés :</p>
+  <ul>
+    <li>ton profil et tes réponses ;</li>
+    <li>ton planning et l'état de tes démarches ;</li>
+    <li>tes heures de travail ;</li>
+    <li>les fichiers de ton coffre-fort.</li>
+  </ul>
+  <p>Tu ne pourras pas les récupérer.</p>
+  <form method="post" action="{{ url_for('profil.supprimer') }}" class="actions">
+    <button class="bouton bouton-danger" type="submit"><i class="ti ti-trash" aria-hidden="true"></i> Oui, supprimer mes données</button>
+    <a class="bouton bouton-secondaire" href="{{ url_for('profil.formulaire') }}">Annuler</a>
+  </form>
+</section>
+{% endblock %}

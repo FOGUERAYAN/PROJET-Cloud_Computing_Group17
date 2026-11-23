@@ -36,6 +36,7 @@ def decouvrir():
         lieux=filtrer_decouvrir(lieux(), filtre),
         filtres={code: libelle for code, (libelle, _) in FILTRES_DECOUVRIR.items()},
         filtre_actif=filtre,
+        photo_bandeau=trouver(lieux(), "vieux_lille"),
     )
 
 

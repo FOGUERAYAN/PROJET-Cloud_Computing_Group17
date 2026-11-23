@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% from "_macros.html" import bandeau, mise_en_page %}
+{% block titre %}Mon profil | Cap90{% endblock %}
+{% block bandeau %}{{ bandeau("Mon profil", "Tes réponses, tes badges et tes données.") }}{% endblock %}
+
+{% block contenu %}
+{% call mise_en_page() %}
+<section class="carte" aria-labelledby="titre-reponses">
+  <div class="carte-entete">
+    <h2 id="titre-reponses">Mes réponses</h2>
+    <a class="bouton bouton-secondaire" href="{{ url_for('profil.modifier') }}"><i class="ti ti-pencil" aria-hidden="true"></i> Modifier</a>
+  </div>
+  <dl class="reponses">
+    {% if profil.pseudo %}<div><dt>Pseudo</dt><dd>{{ profil.pseudo }}</dd></div>{% endif %}
+    <div><dt>Statut</dt><dd>{{ statut }}</dd></div>
+    <div><dt>Ville</dt><dd>{{ profil.ville | majuscule_initiale }}</dd></div>
+    <div><dt>Date d'arrivée</dt><dd>{{ date_arrivee }}</dd></div>
+    <div><dt>Langue maternelle</dt><dd>{{ profil.langue | majuscule_initiale }}</dd></div>
+    <div><dt>Centres d'intérêt</dt><dd>{{ interets | join(", ") if interets else "Aucun" }}</dd></div>
+  </dl>
+</section>
+
+<section class="carte" aria-labelledby="titre-badges-profil">
+  <h2 id="titre-badges-profil">Mes badges</h2>
+  <ul class="badges">
+    {% for badge in badges %}
+    <li class="badge-succes{% if not badge.obtenu %} verrouille{% endif %}">
+      <i class="ti ti-{{ badge.icone if badge.obtenu else 'lock' }}" aria-hidden="true"></i>
+      <span><strong>{{ badge.titre }}</strong><br><span class="discret">{{ badge.description }}{% if not badge.obtenu %} Pas encore obtenu.{% endif %}</span></span>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+
+<a class="carte acces-carte" href="{{ url_for('coffre.index') }}">
+  <i class="ti ti-lock" aria-hidden="true"></i>
+  <span><strong>Mon coffre-fort</strong><br>Tes justificatifs, bientôt disponibles ici.</span>
+</a>
+
+<section class="carte zone-danger" aria-labelledby="titre-donnees">
+  <h2 id="titre-donnees">Mes données</h2>
+  <p>Tu peux effacer ton profil, ton planning, tes heures de travail et les fichiers de ton coffre-fort.</p>
+  <a class="bouton bouton-danger" href="{{ url_for('profil.supprimer_confirmation') }}"><i class="ti ti-trash" aria-hidden="true"></i> Supprimer mes données</a>
+</section>
+{% endcall %}
+{% endblock %}

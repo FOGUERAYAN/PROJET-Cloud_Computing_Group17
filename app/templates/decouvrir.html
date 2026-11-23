@@ -1,18 +1,17 @@
 {% extends "base.html" %}
-{% from "_macros.html" import photo %}
+{% from "_macros.html" import bandeau, mise_en_page, photo %}
 {% block titre %}Découvrir Lille | Cap90{% endblock %}
+{% block bandeau %}{{ bandeau("Découvrir Lille", "Les lieux à voir, où manger pas cher et où sortir.", ["bons-plans"], lieu=photo_bandeau) }}{% endblock %}
 {% block contenu %}
-<section class="carte">
-  <h1>Découvrir Lille</h1>
-  <nav class="filtres" aria-label="Filtrer par catégorie">
-    <a class="filtre" href="{{ url_for('lille.decouvrir') }}" {% if not filtre_actif %}aria-current="true"{% endif %}>Tout</a>
-    {% for code, libelle in filtres.items() %}
-    <a class="filtre" href="{{ url_for('lille.decouvrir', filtre=code) }}" {% if filtre_actif == code %}aria-current="true"{% endif %}>{{ libelle }}</a>
-    {% endfor %}
-  </nav>
-</section>
+{% call mise_en_page(["bons-plans"]) %}
+<nav class="filtres" aria-label="Filtrer par catégorie">
+  <a class="filtre" href="{{ url_for('lille.decouvrir') }}" {% if not filtre_actif %}aria-current="true"{% endif %}>Tout</a>
+  {% for code, libelle in filtres.items() %}
+  <a class="filtre" href="{{ url_for('lille.decouvrir', filtre=code) }}" {% if filtre_actif == code %}aria-current="true"{% endif %}>{{ libelle }}</a>
+  {% endfor %}
+</nav>
 
-<div class="grille">
+<div class="grille grille-2">
   {% for lieu in lieux %}
   <a class="carte carte-lieu carte-cliquable" href="{{ url_for('lille.detail', identifiant=lieu.id) }}">
     {{ photo(lieu, "photo-grande") }}
@@ -24,4 +23,5 @@
   <p class="carte">Aucun lieu dans cette catégorie pour l'instant.</p>
   {% endfor %}
 </div>
+{% endcall %}
 {% endblock %}

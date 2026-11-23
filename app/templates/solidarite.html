@@ -1,5 +1,7 @@
 {% extends "base.html" %}
-{% block titre %}Solidarité | Cap90{% endblock %}
+{% from "_macros.html" import bandeau, mise_en_page, bouton_officiel %}
+{% block titre %}Entraide | Cap90{% endblock %}
+{% block bandeau %}{{ bandeau("Cette semaine à Lille", "Aide alimentaire, épiceries solidaires et bénévolat près de chez toi.", ["entraide", "bons-plans"]) }}{% endblock %}
 
 {% macro entree_agenda(entree) %}
 {% set libelle, icone = types[entree.type] %}
@@ -11,17 +13,11 @@
   <p class="ligne-info"><i class="ti ti-repeat" aria-hidden="true"></i> Fréquence : {{ entree.frequence }}</p>
   {% if entree.adresse %}<p class="ligne-info"><i class="ti ti-map-pin" aria-hidden="true"></i> {{ entree.adresse }}</p>{% endif %}
   {% if entree.conditions %}<p class="ligne-info"><i class="ti ti-user-check" aria-hidden="true"></i> {{ entree.conditions }}</p>{% endif %}
-  {% if entree.lien_inscription %}
-  <a href="{{ entree.lien_inscription }}" target="_blank" rel="noopener noreferrer"><i class="ti ti-external-link" aria-hidden="true"></i> S'inscrire ou se renseigner</a>
-  {% endif %}
+  {% if entree.lien_inscription %}{{ bouton_officiel(entree.lien_inscription) }}{% else %}<p class="discret">Lien officiel à compléter.</p>{% endif %}
 </article>
 {% endmacro %}
 
 {% block contenu %}
-<section class="carte">
-  <h1>Cette semaine à Lille</h1>
-  <p>Aide alimentaire, épiceries solidaires et bénévolat près de chez toi.</p>
-</section>
 
 <div class="agenda">
   {% for jour in jours %}
@@ -36,6 +32,7 @@
   {% endfor %}
 </div>
 
+{% call mise_en_page(["entraide", "bons-plans"]) %}
 {% if sans_jour %}
 <section class="carte">
   <h2>Jour à confirmer</h2>
@@ -59,4 +56,5 @@
 </section>
 
 <p class="discret mention-bas"><i class="ti ti-info-circle" aria-hidden="true"></i> Les horaires changent souvent, vérifie sur le site de l'association.</p>
+{% endcall %}
 {% endblock %}

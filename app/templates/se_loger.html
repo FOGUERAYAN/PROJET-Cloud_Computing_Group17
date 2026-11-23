@@ -1,27 +1,9 @@
 {% extends "base.html" %}
-{% from "_macros.html" import liens, mention_verification %}
+{% from "_macros.html" import bandeau, mise_en_page, bouton_officiel, mention_verification %}
 {% block titre %}Se loger | Cap90{% endblock %}
+{% block bandeau %}{{ bandeau("Se loger", "Commence par les sites officiels. Ils sont gratuits et plus sûrs.", ["logement"]) }}{% endblock %}
 {% block contenu %}
-<section class="carte">
-  <h1>Se loger</h1>
-  <p>Commence par les sites officiels. Ils sont gratuits et plus sûrs.</p>
-  {{ mention_verification() }}
-</section>
-
-<div class="grille">
-  {% for site in sites %}
-  <article class="carte carte-lieu">
-    <h2><i class="ti ti-home" aria-hidden="true"></i> {{ site.nom }}</h2>
-    <p>{{ site.description }}</p>
-    {% if site.lien_officiel %}
-    {{ liens(site) }}
-    {% else %}
-    <p class="discret">Lien à compléter.</p>
-    {% endif %}
-  </article>
-  {% endfor %}
-</div>
-
+{% call mise_en_page(["logement"]) %}
 <section class="carte fiche-arnaques" aria-labelledby="titre-arnaques">
   <h2 id="titre-arnaques"><i class="ti ti-alert-triangle icone-alerte" aria-hidden="true"></i> Éviter les arnaques</h2>
   <ul class="liste-conseils">
@@ -31,4 +13,17 @@
   </ul>
   <p class="discret">En cas de doute, demande conseil au Crous ou au service logement de ton établissement.</p>
 </section>
+
+<h2 class="titre-section">Sites recommandés</h2>
+{{ mention_verification() }}
+<div class="grille grille-2">
+  {% for site in sites %}
+  <article class="carte carte-lieu">
+    <h3><i class="ti ti-home" aria-hidden="true"></i> {{ site.nom }}</h3>
+    <p>{{ site.description }}</p>
+    {% if site.lien_officiel %}{{ bouton_officiel(site.lien_officiel) }}{% else %}<p class="discret">Lien à compléter.</p>{% endif %}
+  </article>
+  {% endfor %}
+</div>
+{% endcall %}
 {% endblock %}

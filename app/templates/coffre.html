@@ -1,10 +1,13 @@
 {% extends "base.html" %}
+{% from "_macros.html" import bandeau, mise_en_page %}
 {% block titre %}Coffre-fort | Cap90{% endblock %}
+{% block bandeau %}{{ bandeau("Coffre-fort", "Un espace pour ranger tes justificatifs.", ["papiers"]) }}{% endblock %}
 {% block contenu %}
+{% call mise_en_page(["papiers"]) %}
 <section class="carte attente">
   <i class="ti ti-lock icone-grande" aria-hidden="true"></i>
-  <h1>Coffre-fort</h1>
-  <p>Disponible prochainement.</p>
+  <h2>Disponible prochainement.</h2>
   <p class="discret">Tu pourras y ranger tes justificatifs.</p>
 </section>
+{% endcall %}
 {% endblock %}

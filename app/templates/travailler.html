@@ -1,10 +1,9 @@
 {% extends "base.html" %}
+{% from "_macros.html" import bandeau, mise_en_page, bouton_officiel %}
 {% block titre %}Travailler | Cap90{% endblock %}
+{% block bandeau %}{{ bandeau("Travailler", "Suis tes heures et connais tes droits pour travailler pendant tes études.", ["travail"]) }}{% endblock %}
 {% block contenu %}
-<section class="carte">
-  <h1>Travailler</h1>
-  <p>Suis tes heures et connais tes droits pour travailler pendant tes études.</p>
-</section>
+{% call mise_en_page(["travail"]) %}
 
 {% if jauge %}
 <section class="carte">
@@ -61,7 +60,7 @@
 
 <section class="carte encadre-retard">
   <p><i class="ti ti-alert-triangle" aria-hidden="true"></i> <strong>Au-delà de 964 heures par an sans autorisation de travail, ton titre de séjour peut être retiré.</strong></p>
-  <a href="{{ lien_f2713 }}" target="_blank" rel="noopener noreferrer"><i class="ti ti-external-link" aria-hidden="true"></i> Lire la fiche officielle sur service-public.fr</a>
+  {{ bouton_officiel(lien_f2713) }}
 </section>
 
 <div class="grille">
@@ -90,4 +89,5 @@
     <p class="discret">Les règles exactes sont à vérifier sur la fiche officielle.</p>
   </article>
 </div>
+{% endcall %}
 {% endblock %}

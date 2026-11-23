@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% from "_macros.html" import bandeau, mise_en_page, bouton_officiel %}
+{% block titre %}Liens utiles | Cap90{% endblock %}
+{% block bandeau %}
+{{ bandeau("Liens utiles" ~ (" : " ~ themes[theme] if theme else ""), "Les sites officiels pour faire tes démarches en toute sécurité.", themes.keys() | list, actif=theme) }}
+{% endblock %}
+
+{% block contenu %}
+{% call mise_en_page([theme] if theme else []) %}
+<div class="grille">
+  {% for lien in liens %}
+  <article class="carte">
+    <h2>{{ lien.titre }}</h2>
+    <p>{{ lien.description }}</p>
+    {{ bouton_officiel(lien.url) }}
+  </article>
+  {% endfor %}
+</div>
+
+{% if demarches or lieux %}
+<section class="carte">
+  <h2>Démarches et lieux du thème</h2>
+  <ul class="liste-liens">
+    {% for d in demarches %}
+    <li><a href="{{ d.lien_officiel }}" target="_blank" rel="noopener noreferrer">{{ d.titre }} <i class="ti ti-external-link" aria-hidden="true"></i></a></li>
+    {% endfor %}
+    {% for l in lieux %}
+    <li><a href="{{ l.lien_officiel }}" target="_blank" rel="noopener noreferrer">{{ l.nom }} <i class="ti ti-external-link" aria-hidden="true"></i></a></li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+{% if not liens and not demarches and not lieux %}
+<p class="carte">Aucun lien pour ce thème pour l'instant.</p>
+{% endif %}
+{% endcall %}
+{% endblock %}

@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block titre %}Mon profil | Cap90{% endblock %}
+{% from "_macros.html" import bandeau %}
+{% block titre %}{{ titre }} | Cap90{% endblock %}
+{% block bandeau %}{{ bandeau(titre, "Pas de mot de passe. Ton profil est lié à ce navigateur.") }}{% endblock %}
 {% block contenu %}
-<section class="carte">
-  <h1>Mon profil</h1>
-  <p class="discret">Pas de mot de passe. Ton profil est lié à ce navigateur.</p>
+<section class="carte carte-formulaire">
 
   {% if erreurs %}
   <div class="erreurs" role="alert">
@@ -12,7 +12,7 @@
   </div>
   {% endif %}
 
-  <form method="post" action="{{ url_for('profil.creer') }}" class="formulaire">
+  <form method="post" action="{{ action }}" class="formulaire">
     <label for="pseudo">Pseudo (facultatif)</label>
     <input id="pseudo" name="pseudo" maxlength="40" value="{{ valeurs.pseudo or '' }}">
 
@@ -45,7 +45,7 @@
       {% endfor %}
     </fieldset>
 
-    <button class="bouton" type="submit"><i class="ti ti-calendar-plus" aria-hidden="true"></i> Créer mon planning</button>
+    <button class="bouton" type="submit"><i class="ti ti-calendar-plus" aria-hidden="true"></i> {{ "Voir l'effet sur mon planning" if "modifier" in action else "Créer mon planning" }}</button>
   </form>
 </section>
 {% endblock %}

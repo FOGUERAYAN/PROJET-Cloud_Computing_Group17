@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% from "_macros.html" import bandeau %}
+{% block titre %}Confirmer mes réponses | Cap90{% endblock %}
+{% block bandeau %}{{ bandeau("Confirmer mes réponses", "Voici l'effet de tes nouvelles réponses sur ton planning.") }}{% endblock %}
+
+{% block contenu %}
+<section class="carte carte-formulaire">
+  {% set lignes = [
+    ("gardees", "circle-check", "Étapes déjà faites, conservées"),
+    ("ajoutees", "circle-plus", "Nouvelles étapes"),
+    ("deplacees", "calendar-repeat", "Étapes avec une nouvelle date limite"),
+    ("retirees", "circle-minus", "Étapes retirées, car elles ne te concernent plus"),
+  ] %}
+  {% set rien = not (resume.ajoutees or resume.deplacees or resume.retirees) %}
+  {% for cle, icone, titre in lignes if resume[cle] %}
+  <h2 class="titre-liste"><i class="ti ti-{{ icone }}" aria-hidden="true"></i> {{ titre }}</h2>
+  <ul>{% for nom in resume[cle] %}<li>{{ nom }}</li>{% endfor %}</ul>
+  {% endfor %}
+  {% if rien %}<p>Ton planning ne change pas.</p>{% endif %}
+
+  <form method="post" action="{{ url_for('profil.confirmer') }}" class="actions">
+    {% for champ in ("pseudo", "statut", "ville", "date_arrivee", "langue") %}
+    <input type="hidden" name="{{ champ }}" value="{{ nouveau[champ] }}">
+    {% endfor %}
+    {% for interet in interets %}<input type="hidden" name="interets" value="{{ interet }}">{% endfor %}
+    <button class="bouton" type="submit"><i class="ti ti-check" aria-hidden="true"></i> Confirmer</button>
+    <a class="bouton bouton-secondaire" href="{{ url_for('profil.formulaire') }}">Annuler</a>
+  </form>
+</section>
+{% endblock %}
