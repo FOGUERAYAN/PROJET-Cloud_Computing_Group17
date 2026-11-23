@@ -9,11 +9,22 @@ derrière un Load Balancer. Elle utilise Azure Table Storage et Azure Blob Stora
 
 ## Fonctionnalités
 
+- Mise en page sur 1200 px : bandeau bleu nuit en tête de chaque page, puis deux colonnes sur ordinateur
+  (contenu et colonne latérale avec la progression, la prochaine étape, l'agenda et les liens utiles du thème).
+- Accueil : bandeau "Bienvenue à Lille", 8 tuiles d'accès, prochaine étape et agenda de la semaine.
+- Mon profil (pastille avec les initiales, onglet Profil sur mobile) : modification des 5 réponses avec
+  recalcul du planning après confirmation (les étapes faites sont gardées), badges, accès au coffre-fort,
+  suppression de toutes les données après confirmation.
+- Liens officiels : bouton "Site officiel" sur chaque démarche, lieu et aide, et `app/data/liens_utiles.json`
+  (chaque adresse a été testée avant d'être ajoutée). Étiquettes de thème cliquables vers `/liens-utiles?theme=...`.
+
 - Accueil avec un bouton "Créer mon profil".
 - Profil en 5 questions (statut, ville, date d'arrivée, langue maternelle, centres d'intérêt), sans mot de passe.
   L'identifiant utilisateur est gardé dans la session Flask.
-- Planning : jour courant ("Jour 12 sur 90"), étapes avec date limite, jours restants, case "fait",
-  pièces à fournir et lien officiel. Une étape à moins de 7 jours est signalée avec la couleur d'alerte.
+- Planning : anneau de progression, "Ta prochaine étape" mise en avant, étapes groupées selon la date du jour
+  (En retard, Cette semaine, Ce mois-ci, Plus tard, Déjà faites) dans des blocs repliables,
+  pièces à préparer à cocher (champ `pieces_pretes`), badges, et message de confirmation de 4 secondes
+  après "C'est fait" (animation CSS qui respecte `prefers-reduced-motion`).
 - Planning : bloc "Où aller" (adresse et métro) quand la démarche est liée à un lieu (`lieu_id`).
 - Lille : lieux utiles, se loger (sites recommandés et fiche anti-arnaques), découvrir Lille
   (filtres à voir, manger pas cher, sortir, et page de détail).
@@ -47,11 +58,11 @@ app/
     entraide.py      chargement, validation et agenda de l'entraide
     travail.py       période annuelle, total des heures et seuils de la jauge (fonctions pures)
     storage.py       interface de stockage, implémentations Azure (Tables et Blob) et mémoire
-  data/              catalogue des démarches, des lieux et de l'entraide
+  data/              démarches, lieux, entraide et liens utiles
   templates/         pages Jinja
   static/css/        theme.css (palette) et app.css (mise en page)
 medias/              photos à envoyer dans le conteneur Blob
-scripts/             charger_medias.py
+scripts/             charger_medias.py, telecharger_photos.py
 function/            future Azure Function (vide)
 tests/               tests pytest, avec le stockage en mémoire
 ```
@@ -104,6 +115,22 @@ le conteneur de l'application partage le réseau du conteneur Azurite (`network_
 
 Le conteneur `medias-lille` est privé : les images passent toujours par la route `/medias/<nom>`.
 
+## Récupérer des photos libres (Wikimedia Commons)
+
+`scripts/telecharger_photos.py` cherche une photo pour chaque lieu sans photo (sauf les sites de logement),
+garde la première image en paysage sous licence CC0, domaine public, CC BY ou CC BY-SA, la télécharge
+dans `medias/<id>.jpg` et remplit `photo` et `credit_photo` dans `lieux.json`.
+
+1. Renseigner `PHOTOS_CONTACT` dans `.env` (contact de l'équipe, envoyé dans le User-Agent demandé par Wikimedia).
+2. Vérifier les choix sans rien télécharger :
+
+   ```
+   python scripts/telecharger_photos.py --dry-run
+   ```
+
+3. Lancer le téléchargement (option `--lieux id1,id2` pour ne traiter que certains lieux), relire les crédits,
+   puis envoyer les photos avec `python scripts/charger_medias.py`.
+
 ## Lancer les tests
 
 Les tests n'ont pas besoin d'Azurite : ils utilisent le stockage en mémoire.
@@ -141,6 +168,7 @@ Les données sont perdues à l'arrêt.
 | `APP_PORT` | Non | Port de la machine hôte utilisé par docker compose (8000 par défaut). |
 | `STORAGE_MODE` | Non | `memoire` (défaut), `azurite` (local) ou `azure` (Managed Identity). |
 | `AZURE_STORAGE_CONNECTION_STRING` | En mode `azurite` | Toujours `UseDevelopmentStorage=true`. Aucune clé de compte. |
+| `PHOTOS_CONTACT` | Pour le script de photos | Contact de l'équipe envoyé à Wikimedia Commons. Jamais versionné. |
 | `AZURE_STORAGE_ACCOUNT_NAME` | En mode `azure` | Nom du compte de stockage. L'authentification passe par `DefaultAzureCredential`. |
 
 Aucun secret n'est écrit dans le code. Le fichier `.env` est ignoré par git et par Docker.
@@ -150,7 +178,7 @@ Aucun secret n'est écrit dans le code. Le fichier `.env` est ignoré par git et
 | Table | PartitionKey | RowKey | Champs |
 | --- | --- | --- | --- |
 | `profils` | `profil` | identifiant utilisateur (uuid) | pseudo, statut, ville, date_arrivee, langue, interets, cree_le |
-| `etapes` | identifiant utilisateur | code de la démarche | titre, date_limite, statut (`a_faire`, `fait`), fait_le, ordre |
+| `etapes` | identifiant utilisateur | code de la démarche | titre, date_limite, statut (`a_faire`, `fait`), fait_le, pieces_pretes, ordre |
 | `annonces` | ville normalisée | uuid | titre, description, categorie, photo_blob, cree_le, expire_le |
 | `heures` | identifiant utilisateur | mois (AAAA-MM) | heures |
 
