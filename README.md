@@ -19,13 +19,20 @@ derrière un Load Balancer. Elle utilise Azure Table Storage et Azure Blob Stora
   (filtres à voir, manger pas cher, sortir, et page de détail).
 - `/medias/<nom>` : photos lues dans le conteneur Blob privé `medias-lille`, avec un cache HTTP d'un jour.
   Sans photo, un bloc de couleur avec l'icône de la catégorie s'affiche.
-- Coffre-fort et Solidarité : pages d'attente.
+- Solidarité : agenda "Cette semaine à Lille" (aide alimentaire, épiceries solidaires, bénévolat),
+  sept colonnes sur ordinateur et liste par jour sur mobile, avec le jour courant mis en avant.
+  Section "Devenir bénévole" vers JeVeuxAider.gouv.fr. Les dons entre habitants arriveront ensuite.
+- Travailler : saisie des heures par mois et jauge des 964 heures autorisées aux étudiants étrangers.
+  La période d'un an commence à la date de validation du visa (date où l'étape est cochée dans le planning)
+  et recommence à chaque anniversaire. Les heures étant saisies par mois, une période compte les 12 mois
+  à partir du mois de validation. Couleur primaire sous 80 %, alerte de 80 à 100 %, retard au-delà.
+- Coffre-fort : page d'attente.
 - `/health` : renvoie `{"status": "ok"}` sans accéder au stockage (sonde du Load Balancer).
 
 Les délais du catalogue (`app/data/demarches.json`) sont indicatifs et marqués `"a_verifier": true`.
 Ils doivent être vérifiés sur service-public.fr.
-De même, les lieux (`app/data/lieux.json`) sont marqués `"a_verifier": true` : les champs dont on n'est pas sûr
-(adresse, métro, prix) sont laissés vides et doivent être complétés.
+De même, les lieux (`app/data/lieux.json`) et l'entraide (`app/data/entraide.json`) sont marqués `"a_verifier": true` : les champs dont on n'est pas sûr
+(adresse, métro, prix, jour, horaires) sont laissés vides et doivent être complétés.
 
 ## Arborescence
 
@@ -33,12 +40,14 @@ De même, les lieux (`app/data/lieux.json`) sont marqués `"a_verifier": true` :
 app/
   __init__.py        create_app()
   config.py          lecture des variables d'environnement
-  routes/            accueil, profil, planning, lille, medias, coffre, solidarite, health
+  routes/            accueil, profil, planning, lille, medias, travail, coffre, solidarite, health
   services/
     planning.py      calcul du rétroplanning (fonctions pures)
     lieux.py         chargement, validation et filtres des lieux
+    entraide.py      chargement, validation et agenda de l'entraide
+    travail.py       période annuelle, total des heures et seuils de la jauge (fonctions pures)
     storage.py       interface de stockage, implémentations Azure (Tables et Blob) et mémoire
-  data/              catalogue des démarches et des lieux
+  data/              catalogue des démarches, des lieux et de l'entraide
   templates/         pages Jinja
   static/css/        theme.css (palette) et app.css (mise en page)
 medias/              photos à envoyer dans le conteneur Blob
@@ -141,7 +150,8 @@ Aucun secret n'est écrit dans le code. Le fichier `.env` est ignoré par git et
 | Table | PartitionKey | RowKey | Champs |
 | --- | --- | --- | --- |
 | `profils` | `profil` | identifiant utilisateur (uuid) | pseudo, statut, ville, date_arrivee, langue, interets, cree_le |
-| `etapes` | identifiant utilisateur | code de la démarche | titre, date_limite, statut (`a_faire`, `fait`), ordre |
+| `etapes` | identifiant utilisateur | code de la démarche | titre, date_limite, statut (`a_faire`, `fait`), fait_le, ordre |
 | `annonces` | ville normalisée | uuid | titre, description, categorie, photo_blob, cree_le, expire_le |
+| `heures` | identifiant utilisateur | mois (AAAA-MM) | heures |
 
 La table `annonces` est créée, mais ses pages ne sont pas encore développées.
