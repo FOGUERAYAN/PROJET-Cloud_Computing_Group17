@@ -69,6 +69,7 @@ def test_credit_nettoye_du_html():
     [
         ('<span class="fn"><a href="x">Marie  Curie</a></span>', "Marie Curie"),
         ("Pierre &amp; Paul", "Pierre & Paul"),
+        ("© Pierre André", "Pierre André"),
         ("<bdi>Inconnu</bdi>\n", "Inconnu"),
         ("", ""),
     ],

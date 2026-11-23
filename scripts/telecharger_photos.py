@@ -35,9 +35,10 @@ PAUSE_SECONDES = 1.0
 
 
 def nettoyer_texte(valeur: str) -> str:
-    """Retire les balises HTML et les entités, et compacte les espaces."""
+    """Retire les balises HTML, les entités et le signe ©, et compacte les espaces."""
     sans_balises = re.sub(r"<[^>]+>", " ", valeur or "")
-    return re.sub(r"\s+", " ", html.unescape(sans_balises)).strip()
+    texte = html.unescape(sans_balises).replace("©", " ")
+    return re.sub(r"\s+", " ", texte).strip()
 
 
 def licence_acceptee(licence: str) -> bool:
@@ -115,13 +116,14 @@ def parametres_recherche(nom: str) -> dict:
 
 
 def tableau(lignes: list[tuple]) -> str:
-    """Tableau texte aligné."""
+    """Tableau texte aligné. La dernière colonne (lien) n'est jamais tronquée."""
     entetes = ("Lieu", "Fichier", "Auteur", "Licence", "Page Commons")
     toutes = [entetes, *lignes]
     largeurs = [min(max(len(str(x[i])) for x in toutes), 60) for i in range(len(entetes))]
     sortie = []
     for numero, ligne in enumerate(toutes):
-        sortie.append(" | ".join(str(v)[:60].ljust(largeurs[i]) for i, v in enumerate(ligne)))
+        cellules = [str(v)[:60].ljust(largeurs[i]) for i, v in enumerate(ligne[:-1])]
+        sortie.append(" | ".join([*cellules, str(ligne[-1])]))
         if numero == 0:
             sortie.append("-+-".join("-" * x for x in largeurs))
     return "\n".join(sortie)
