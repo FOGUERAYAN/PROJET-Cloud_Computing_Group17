@@ -16,6 +16,8 @@ TABLE_HEURES = "heures"
 TABLES = (TABLE_PROFILS, TABLE_ETAPES, TABLE_ANNONCES, TABLE_HEURES)
 
 CONTENEUR_MEDIAS = "medias-lille"
+# Futur coffre-fort : un dossier par utilisateur (préfixe "<identifiant>/").
+CONTENEUR_COFFRE = "coffre"
 
 PARTITION_PROFIL = "profil"
 
@@ -40,6 +42,14 @@ class Stockage(ABC):
     @abstractmethod
     def _lister(self, table: str, partition: str) -> list[dict]:
         """Retourne toutes les entités d'une partition."""
+
+    @abstractmethod
+    def _supprimer(self, table: str, partition: str, ligne: str) -> None:
+        """Supprime une entité (sans erreur si elle n'existe pas)."""
+
+    @abstractmethod
+    def supprimer_coffre(self, id_utilisateur: str) -> int:
+        """Supprime les fichiers du coffre-fort d'un utilisateur. Retourne le nombre de fichiers supprimés."""
 
     @abstractmethod
     def envoyer_media(self, nom: str, contenu: bytes, type_contenu: str) -> None:
@@ -67,8 +77,16 @@ class Stockage(ABC):
                 "date_limite": etape["date_limite"],
                 "statut": etape["statut"],
                 "ordre": etape["ordre"],
+                "fait_le": etape.get("fait_le", ""),
+                "pieces_pretes": etape.get("pieces_pretes", ""),
             }
             self._ecrire(TABLE_ETAPES, entite)
+
+    def supprimer_etape(self, id_utilisateur: str, code: str) -> None:
+        self._supprimer(TABLE_ETAPES, id_utilisateur, code)
+
+    def changer_pieces_pretes(self, id_utilisateur: str, code: str, valeur: str) -> None:
+        self._ecrire(TABLE_ETAPES, {"PartitionKey": id_utilisateur, "RowKey": code, "pieces_pretes": valeur})
 
     def lister_etapes(self, id_utilisateur: str) -> list[dict]:
         etapes = self._lister(TABLE_ETAPES, id_utilisateur)
@@ -92,6 +110,14 @@ class Stockage(ABC):
     def lister_heures(self, id_utilisateur: str) -> dict[str, float]:
         return {e["RowKey"]: float(e["heures"]) for e in self._lister(TABLE_HEURES, id_utilisateur)}
 
+    def supprimer_utilisateur(self, id_utilisateur: str) -> None:
+        """Efface le profil, les étapes, les heures et les fichiers du coffre-fort."""
+        for table in (TABLE_ETAPES, TABLE_HEURES):
+            for entite in self._lister(table, id_utilisateur):
+                self._supprimer(table, id_utilisateur, entite["RowKey"])
+        self.supprimer_coffre(id_utilisateur)
+        self._supprimer(TABLE_PROFILS, PARTITION_PROFIL, id_utilisateur)
+
 
 class StockageMemoire(Stockage):
     """Implémentation en mémoire, sans dépendance externe."""
@@ -99,6 +125,7 @@ class StockageMemoire(Stockage):
     def __init__(self):
         self.tables: dict[str, dict[tuple[str, str], dict]] = {}
         self.medias: dict[str, tuple[bytes, str]] = {}
+        self.coffre: dict[str, bytes] = {}
 
     def initialiser(self) -> None:
         for nom in TABLES:
@@ -115,6 +142,15 @@ class StockageMemoire(Stockage):
 
     def _lister(self, table, partition):
         return [dict(e) for (pk, _), e in self.tables[table].items() if pk == partition]
+
+    def _supprimer(self, table, partition, ligne):
+        self.tables[table].pop((partition, ligne), None)
+
+    def supprimer_coffre(self, id_utilisateur):
+        noms = [nom for nom in self.coffre if nom.startswith(f"{id_utilisateur}/")]
+        for nom in noms:
+            del self.coffre[nom]
+        return len(noms)
 
     def envoyer_media(self, nom, contenu, type_contenu):
         self.medias[nom] = (contenu, type_contenu)
@@ -182,6 +218,21 @@ class StockageAzure(Stockage):
         client = self.service_tables.get_table_client(table)
         entites = client.query_entities("PartitionKey eq @pk", parameters={"pk": partition})
         return [dict(e) for e in entites]
+
+    def _supprimer(self, table, partition, ligne):
+        self.service_tables.get_table_client(table).delete_entity(partition, ligne)
+
+    def supprimer_coffre(self, id_utilisateur):
+        from azure.core.exceptions import ResourceNotFoundError
+
+        conteneur = self.service_blobs.get_container_client(CONTENEUR_COFFRE)
+        try:
+            noms = [b.name for b in conteneur.list_blobs(name_starts_with=f"{id_utilisateur}/")]
+        except ResourceNotFoundError:
+            return 0  # le coffre-fort n'existe pas encore
+        for nom in noms:
+            conteneur.delete_blob(nom)
+        return len(noms)
 
     def envoyer_media(self, nom, contenu, type_contenu):
         from azure.storage.blob import ContentSettings
