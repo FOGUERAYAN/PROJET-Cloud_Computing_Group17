@@ -3,6 +3,7 @@
 import pytest
 
 from scripts.telecharger_photos import (
+    candidats_valides,
     choisir_image,
     credit,
     licence_acceptee,
@@ -49,6 +50,13 @@ REPONSE = {
         ]
     }
 }
+
+
+def test_propositions_valides_dans_l_ordre():
+    valides = candidats_valides(REPONSE)
+    assert [c["titre"] for c in valides] == ["File:Bonne.jpg", "File:Suivante.jpg"]
+    assert choisir_image(REPONSE, 2)["titre"] == "File:Suivante.jpg"
+    assert choisir_image(REPONSE, 3) is None
 
 
 def test_choisit_la_premiere_image_paysage_avec_licence_libre():
@@ -112,7 +120,7 @@ def test_auteur_obligatoire_sauf_domaine_public():
 
 
 def test_parametres_de_recherche():
-    parametres = parametres_recherche("Grand Place")
+    parametres = parametres_recherche("Grand Place Lille")
     assert parametres["gsrsearch"] == "Grand Place Lille"
     assert parametres["gsrnamespace"] == "6"
     assert parametres["iiurlwidth"] == "1200"
