@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% from "_macros.html" import liens, mention_verification %}
+{% block titre %}Se loger | Cap90{% endblock %}
+{% block contenu %}
+<section class="carte">
+  <h1>Se loger</h1>
+  <p>Commence par les sites officiels. Ils sont gratuits et plus sûrs.</p>
+  {{ mention_verification() }}
+</section>
+
+<div class="grille">
+  {% for site in sites %}
+  <article class="carte carte-lieu">
+    <h2><i class="ti ti-home" aria-hidden="true"></i> {{ site.nom }}</h2>
+    <p>{{ site.description }}</p>
+    {% if site.lien_officiel %}
+    {{ liens(site) }}
+    {% else %}
+    <p class="discret">Lien à compléter.</p>
+    {% endif %}
+  </article>
+  {% endfor %}
+</div>
+
+<section class="carte fiche-arnaques" aria-labelledby="titre-arnaques">
+  <h2 id="titre-arnaques"><i class="ti ti-alert-triangle icone-alerte" aria-hidden="true"></i> Éviter les arnaques</h2>
+  <ul class="liste-conseils">
+    <li><i class="ti ti-cash-off" aria-hidden="true"></i> <span><strong>Ne paie jamais avant la visite.</strong> Ni caution, ni loyer, ni frais de dossier par mandat ou carte prépayée.</span></li>
+    <li><i class="ti ti-id" aria-hidden="true"></i> <span><strong>Vérifie l'identité du propriétaire.</strong> Demande une pièce d'identité et un justificatif de propriété.</span></li>
+    <li><i class="ti ti-zoom-question" aria-hidden="true"></i> <span><strong>Méfie-toi d'un loyer très bas.</strong> Compare avec les annonces du même quartier.</span></li>
+  </ul>
+  <p class="discret">En cas de doute, demande conseil au Crous ou au service logement de ton établissement.</p>
+</section>
+{% endblock %}

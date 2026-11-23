@@ -1,9 +1,21 @@
 {% extends "base.html" %}
+{% from "_macros.html" import photo %}
 {% block contenu %}
 <section class="carte accueil">
   <h1>Bienvenue sur Cap90</h1>
-  <p>Cap90 vous accompagne pendant vos 90 premiers jours en France.</p>
-  <p>Répondez à 5 questions et obtenez un planning daté de vos démarches.</p>
+  <p>Cap90 t'accompagne pendant tes 90 premiers jours en France.</p>
+  <p>Réponds à 5 questions et obtiens un planning daté de tes démarches.</p>
   <a class="bouton" href="{{ url_for('profil.formulaire') }}"><i class="ti ti-user-plus" aria-hidden="true"></i> Créer mon profil</a>
+</section>
+
+<section class="carte bandeau">
+  {% if grand_place %}{{ photo(grand_place, "photo-bandeau") }}{% endif %}
+  <h2 class="titre-section">Bienvenue à Lille</h2>
+  <p>Tout ce qu'il faut pour t'installer dans la Métropole Européenne de Lille.</p>
+  <div class="acces-rapides">
+    <a class="acces" href="{{ url_for('lille.lieux_utiles') }}"><i class="ti ti-building-community" aria-hidden="true"></i> Lieux utiles</a>
+    <a class="acces" href="{{ url_for('lille.se_loger') }}"><i class="ti ti-home" aria-hidden="true"></i> Se loger</a>
+    <a class="acces" href="{{ url_for('lille.decouvrir') }}"><i class="ti ti-building-castle" aria-hidden="true"></i> Découvrir Lille</a>
+  </div>
 </section>
 {% endblock %}

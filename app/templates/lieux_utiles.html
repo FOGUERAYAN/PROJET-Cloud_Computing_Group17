@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from "_macros.html" import photo, adresse, liens, mention_verification %}
+{% block titre %}Lieux utiles | Cap90{% endblock %}
+{% block contenu %}
+<section class="carte">
+  <h1>Lieux utiles</h1>
+  <p>Les adresses à connaître pour tes démarches à Lille.</p>
+  {{ mention_verification() }}
+</section>
+
+<div class="grille">
+  {% for lieu in lieux %}
+  <article class="carte carte-lieu" id="{{ lieu.id }}">
+    {{ photo(lieu) }}
+    <h2>{{ lieu.nom }}</h2>
+    {{ adresse(lieu) }}
+    <p>{{ lieu.description }}</p>
+    {{ liens(lieu) }}
+  </article>
+  {% endfor %}
+</div>
+{% endblock %}

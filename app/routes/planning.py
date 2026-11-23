@@ -4,6 +4,7 @@ from datetime import date
 
 from flask import Blueprint, abort, current_app, redirect, render_template, session, url_for
 
+from app.services.lieux import trouver
 from app.services.planning import DUREE_PARCOURS, est_urgente, jour_courant, jours_restants
 
 bp = Blueprint("planning", __name__)
@@ -38,6 +39,7 @@ def index():
                 "pieces": detail.get("pieces", []),
                 "lien_officiel": detail.get("lien_officiel", ""),
                 "conseil": detail.get("conseil", ""),
+                "lieu": trouver(current_app.extensions["lieux"], detail.get("lieu_id", "")),
             }
         )
 

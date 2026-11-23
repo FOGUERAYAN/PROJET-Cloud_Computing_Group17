@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% from "_macros.html" import photo, adresse, liens, mention_verification %}
+{% block titre %}{{ lieu.nom }} | Cap90{% endblock %}
+{% block contenu %}
+<p><a href="{{ url_for('lille.decouvrir') }}"><i class="ti ti-chevron-left" aria-hidden="true"></i> Retour à Découvrir Lille</a></p>
+<article class="carte carte-lieu">
+  {{ photo(lieu, "photo-grande") }}
+  <h1>{{ lieu.nom }}</h1>
+  {{ adresse(lieu) }}
+  {% if lieu.prix_indicatif %}<p class="ligne-info"><i class="ti ti-coin-euro" aria-hidden="true"></i> {{ lieu.prix_indicatif }}</p>{% endif %}
+  <p>{{ lieu.description }}</p>
+  {{ liens(lieu) }}
+  {{ mention_verification() }}
+</article>
+{% endblock %}

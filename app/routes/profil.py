@@ -30,16 +30,16 @@ def valider(formulaire) -> tuple[dict, list[str]]:
     interets = [i for i in formulaire.getlist("interets") if i in INTERETS]
 
     if statut not in STATUTS:
-        erreurs.append("Choisissez un statut.")
+        erreurs.append("Choisis un statut.")
     if not ville:
-        erreurs.append("Indiquez votre ville.")
+        erreurs.append("Indique ta ville.")
     if not langue:
-        erreurs.append("Indiquez votre langue maternelle.")
+        erreurs.append("Indique ta langue maternelle.")
     try:
         date_arrivee = date.fromisoformat(formulaire.get("date_arrivee", ""))
     except ValueError:
         date_arrivee = None
-        erreurs.append("Indiquez une date d'arrivée valide.")
+        erreurs.append("Indique une date d'arrivée valide.")
 
     profil = {
         "pseudo": pseudo,

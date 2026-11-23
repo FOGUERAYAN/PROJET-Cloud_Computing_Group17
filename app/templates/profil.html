@@ -3,7 +3,7 @@
 {% block contenu %}
 <section class="carte">
   <h1>Mon profil</h1>
-  <p class="discret">Pas de mot de passe. Votre profil est lié à ce navigateur.</p>
+  <p class="discret">Pas de mot de passe. Ton profil est lié à ce navigateur.</p>
 
   {% if erreurs %}
   <div class="erreurs" role="alert">
@@ -17,7 +17,7 @@
     <input id="pseudo" name="pseudo" maxlength="40" value="{{ valeurs.pseudo or '' }}">
 
     <fieldset>
-      <legend>1. Quel est votre statut ?</legend>
+      <legend>1. Quel est ton statut ?</legend>
       {% for code, libelle in statuts.items() %}
       <label class="choix">
         <input type="radio" name="statut" value="{{ code }}" required {% if valeurs.statut == code %}checked{% endif %}>
@@ -26,17 +26,17 @@
       {% endfor %}
     </fieldset>
 
-    <label for="ville">2. Dans quelle ville habitez-vous ?</label>
+    <label for="ville">2. Dans quelle ville habites-tu ?</label>
     <input id="ville" name="ville" maxlength="80" required value="{{ valeurs.ville or '' }}">
 
-    <label for="date_arrivee">3. Quelle est votre date d'arrivée en France ?</label>
+    <label for="date_arrivee">3. Quelle est ta date d'arrivée en France ?</label>
     <input id="date_arrivee" name="date_arrivee" type="date" required value="{{ valeurs.date_arrivee or '' }}">
 
-    <label for="langue">4. Quelle est votre langue maternelle ?</label>
+    <label for="langue">4. Quelle est ta langue maternelle ?</label>
     <input id="langue" name="langue" maxlength="40" required value="{{ valeurs.langue or '' }}">
 
     <fieldset>
-      <legend>5. Quels sont vos centres d'intérêt ?</legend>
+      <legend>5. Quels sont tes centres d'intérêt ?</legend>
       {% for code, libelle in interets.items() %}
       <label class="choix">
         <input type="checkbox" name="interets" value="{{ code }}" {% if code in (valeurs.interets or []) %}checked{% endif %}>

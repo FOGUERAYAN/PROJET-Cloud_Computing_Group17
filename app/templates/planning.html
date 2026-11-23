@@ -41,6 +41,14 @@
     <p class="sous-titre">Pièces à préparer</p>
     <ul class="pieces">{% for piece in etape.pieces %}<li>{{ piece }}</li>{% endfor %}</ul>
     {% endif %}
+    {% if etape.lieu and (etape.lieu.adresse or etape.lieu.metro) %}
+    <div class="ou-aller">
+      <p class="sous-titre"><i class="ti ti-map-pin" aria-hidden="true"></i> Où aller</p>
+      <p>{{ etape.lieu.nom }}{% if etape.lieu.adresse %}, {{ etape.lieu.adresse }}{% endif %}</p>
+      {% if etape.lieu.metro %}<p class="ligne-info"><i class="ti ti-train" aria-hidden="true"></i> Métro {{ etape.lieu.metro }}</p>{% endif %}
+      {% if etape.lieu.lien_carte %}<a href="{{ etape.lieu.lien_carte }}" target="_blank" rel="noopener noreferrer"><i class="ti ti-map-2" aria-hidden="true"></i> Voir sur la carte</a>{% endif %}
+    </div>
+    {% endif %}
     {% if etape.conseil %}<p class="conseil"><i class="ti ti-bulb" aria-hidden="true"></i> {{ etape.conseil }}</p>{% endif %}
     {% if etape.lien_officiel %}
     <a href="{{ etape.lien_officiel }}" target="_blank" rel="noopener noreferrer"><i class="ti ti-external-link" aria-hidden="true"></i> Site officiel</a>

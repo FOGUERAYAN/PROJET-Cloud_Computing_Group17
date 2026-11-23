@@ -1,0 +1,33 @@
+{# Photo d'un lieu, servie par /medias. Un bloc de couleur avec l'icône de la catégorie reste
+   dessous : il apparaît si le lieu n'a pas de photo ou si le fichier manque dans le stockage. #}
+{% macro photo(lieu, classe="") %}
+<figure class="photo {{ classe }}">
+  <div class="photo-cadre">
+    <div class="photo-absente" aria-hidden="true"><i class="ti ti-{{ icones_categories[lieu.categorie] }}"></i></div>
+    {% if lieu.photo %}
+    <img src="{{ url_for('medias.lire', nom=lieu.photo) }}" alt="{{ lieu.nom }}" loading="lazy" onerror="this.remove()">
+    {% endif %}
+  </div>
+  {% if lieu.photo %}<figcaption class="credit">{{ lieu.credit_photo }}</figcaption>{% endif %}
+</figure>
+{% endmacro %}
+
+{% macro adresse(lieu) %}
+{% if lieu.adresse %}<p class="ligne-info"><i class="ti ti-map-pin" aria-hidden="true"></i> {{ lieu.adresse }}</p>{% endif %}
+{% if lieu.metro %}<p class="ligne-info"><i class="ti ti-train" aria-hidden="true"></i> Métro {{ lieu.metro }}</p>{% endif %}
+{% endmacro %}
+
+{% macro liens(lieu) %}
+<div class="actions">
+  {% if lieu.lien_carte %}
+  <a class="bouton bouton-secondaire" href="{{ lieu.lien_carte }}" target="_blank" rel="noopener noreferrer"><i class="ti ti-map-2" aria-hidden="true"></i> Voir sur la carte</a>
+  {% endif %}
+  {% if lieu.lien_officiel %}
+  <a class="bouton bouton-secondaire" href="{{ lieu.lien_officiel }}" target="_blank" rel="noopener noreferrer"><i class="ti ti-external-link" aria-hidden="true"></i> Site officiel</a>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro mention_verification() %}
+<p class="discret"><i class="ti ti-info-circle" aria-hidden="true"></i> Ces informations sont en cours de vérification. Consulte toujours le site officiel.</p>
+{% endmacro %}

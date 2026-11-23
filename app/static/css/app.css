@@ -296,3 +296,285 @@ legend {
   font-size: 48px;
   color: var(--couleur-primaire);
 }
+
+/* Navigation : sous-menu Lille, ouvert au survol et au clavier */
+.navigation a[aria-current="page"] {
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+
+.menu-deroulant {
+  position: relative;
+}
+
+.sous-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  min-width: 200px;
+  margin: 0;
+  padding: 8px;
+  list-style: none;
+  background: var(--couleur-surface);
+  border: 1px solid var(--couleur-bordure);
+  border-radius: var(--rayon);
+}
+
+.menu-deroulant:hover .sous-menu,
+.menu-deroulant:focus-within .sous-menu {
+  display: block;
+}
+
+.sous-menu a {
+  display: block;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.sous-menu a:hover,
+.sous-menu a:focus-visible {
+  background: var(--couleur-fond);
+}
+
+/* Barre d'onglets en bas de l'écran sur mobile */
+.barre-onglets {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .navigation {
+    display: none;
+  }
+
+  body {
+    padding-bottom: 72px;
+  }
+
+  .barre-onglets {
+    display: flex;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 20;
+    background: var(--couleur-surface);
+    border-top: 1px solid var(--couleur-bordure);
+  }
+
+  .barre-onglets a {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 4px;
+    color: var(--couleur-texte);
+    font-size: 0.75rem;
+    text-decoration: none;
+  }
+
+  .barre-onglets .ti {
+    font-size: 22px;
+  }
+
+  .barre-onglets a[aria-current="page"] {
+    color: var(--couleur-primaire);
+    font-weight: 500;
+  }
+}
+
+/* Grilles de cartes */
+.grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--espace);
+  margin-bottom: var(--espace);
+}
+
+.grille .carte {
+  margin-bottom: 0;
+}
+
+.carte-lieu h2 {
+  margin: 8px 0;
+}
+
+.carte-cliquable {
+  display: block;
+  color: var(--couleur-texte);
+  text-decoration: none;
+}
+
+.carte-cliquable:hover,
+.carte-cliquable:focus-visible {
+  border-color: var(--couleur-primaire);
+}
+
+.ligne-info {
+  margin: 4px 0;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.bouton-secondaire {
+  margin-top: 4px;
+  padding: 8px 14px;
+  border: 1px solid var(--couleur-primaire);
+  background: var(--couleur-surface);
+  color: var(--couleur-primaire);
+  font-size: 0.9rem;
+}
+
+/* Photos et bloc de remplacement */
+.photo {
+  margin: 0 0 8px;
+}
+
+.photo-cadre {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.photo-grande .photo-cadre {
+  aspect-ratio: 4 / 3;
+}
+
+.photo-bandeau .photo-cadre {
+  aspect-ratio: 21 / 9;
+}
+
+.photo-absente,
+.photo-cadre img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.photo-absente {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--couleur-primaire);
+  color: var(--couleur-surface);
+  font-size: 48px;
+}
+
+.photo-cadre img {
+  object-fit: cover;
+}
+
+.credit {
+  margin-top: 4px;
+  font-size: 0.75rem;
+}
+
+/* Accueil */
+.titre-section {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.acces-rapides {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.acces {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--couleur-bordure);
+  border-radius: var(--rayon);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.liste-acces .acces-carte {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--couleur-texte);
+  text-decoration: none;
+}
+
+.acces-carte .ti {
+  font-size: 32px;
+  color: var(--couleur-primaire);
+}
+
+/* Se loger */
+.fiche-arnaques {
+  border: 2px solid var(--couleur-alerte);
+}
+
+.fiche-arnaques h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.liste-conseils {
+  margin: 12px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.liste-conseils li {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.liste-conseils .ti {
+  font-size: 24px;
+  color: var(--couleur-alerte-texte);
+}
+
+/* Découvrir */
+.filtres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.filtre {
+  padding: 6px 14px;
+  border: 1px solid var(--couleur-bordure);
+  border-radius: 999px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.filtre[aria-current="true"] {
+  border-color: var(--couleur-primaire);
+  background: var(--couleur-primaire);
+  color: var(--couleur-surface);
+}
+
+.prix {
+  font-weight: 500;
+}
+
+/* Planning : où aller */
+.ou-aller {
+  margin: 8px 0;
+  padding: 12px;
+  border: 1px solid var(--couleur-bordure);
+  border-radius: 8px;
+}
+
+.ou-aller p {
+  margin: 2px 0;
+}

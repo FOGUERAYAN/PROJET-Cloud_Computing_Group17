@@ -12,17 +12,44 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
 </head>
 <body>
+  {% set section = request.blueprint %}
+  {% set onglets = [
+    ("planning", url_for("planning.index"), "calendar-event", "Planning"),
+    ("lille", url_for("lille.index"), "map-2", "Lille"),
+    ("coffre", url_for("coffre.index"), "lock", "Coffre-fort"),
+    ("solidarite", url_for("solidarite.index"), "heart-handshake", "Solidarité"),
+  ] %}
+
   <header class="entete">
     <a class="logo" href="{{ url_for('accueil.index') }}"><i class="ti ti-compass" aria-hidden="true"></i> Cap90</a>
     <nav class="navigation" aria-label="Navigation principale">
-      <a href="{{ url_for('planning.index') }}"><i class="ti ti-calendar-event" aria-hidden="true"></i> Planning</a>
-      <a href="{{ url_for('coffre.index') }}"><i class="ti ti-lock" aria-hidden="true"></i> Coffre-fort</a>
-      <a href="{{ url_for('solidarite.index') }}"><i class="ti ti-heart-handshake" aria-hidden="true"></i> Solidarité</a>
+      {% for code, lien, icone, libelle in onglets %}
+        {% if code == "lille" %}
+        <div class="menu-deroulant">
+          <a href="{{ lien }}" {% if section == code %}aria-current="page"{% endif %}><i class="ti ti-{{ icone }}" aria-hidden="true"></i> {{ libelle }} <i class="ti ti-chevron-down" aria-hidden="true"></i></a>
+          <ul class="sous-menu">
+            <li><a href="{{ url_for('lille.lieux_utiles') }}"><i class="ti ti-building-community" aria-hidden="true"></i> Lieux utiles</a></li>
+            <li><a href="{{ url_for('lille.se_loger') }}"><i class="ti ti-home" aria-hidden="true"></i> Se loger</a></li>
+            <li><a href="{{ url_for('lille.decouvrir') }}"><i class="ti ti-building-castle" aria-hidden="true"></i> Découvrir</a></li>
+          </ul>
+        </div>
+        {% else %}
+        <a href="{{ lien }}" {% if section == code %}aria-current="page"{% endif %}><i class="ti ti-{{ icone }}" aria-hidden="true"></i> {{ libelle }}</a>
+        {% endif %}
+      {% endfor %}
     </nav>
   </header>
+
   <main class="contenu">
     {% block contenu %}{% endblock %}
   </main>
-  <footer class="pied">Cap90, vos 90 premiers jours en France.</footer>
+
+  <footer class="pied">Cap90, tes 90 premiers jours en France.</footer>
+
+  <nav class="barre-onglets" aria-label="Navigation mobile">
+    {% for code, lien, icone, libelle in onglets %}
+    <a href="{{ lien }}" {% if section == code %}aria-current="page"{% endif %}><i class="ti ti-{{ icone }}" aria-hidden="true"></i><span>{{ libelle }}</span></a>
+    {% endfor %}
+  </nav>
 </body>
 </html>
