@@ -71,7 +71,10 @@
     {% block contenu %}{% endblock %}
   </main>
 
-  <footer class="pied">Cap90, tes 90 premiers jours à Lille.</footer>
+  <footer class="pied">
+    <p>Cap90, tes 90 premiers jours à Lille.</p>
+    <p class="mention-independance">Cap90 est un projet étudiant indépendant, sans lien avec les organismes cités.</p>
+  </footer>
 
   <nav class="barre-onglets" aria-label="Navigation mobile">
     {% for code, lien, icone, libelle in onglets_bas %}

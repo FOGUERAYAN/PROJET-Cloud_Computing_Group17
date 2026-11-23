@@ -3,10 +3,11 @@
 import json
 from pathlib import Path
 
+from app.services.sigles import erreur_sigle
 from app.services.themes import THEMES
 
 CHEMIN_LIENS = Path(__file__).resolve().parent.parent / "data" / "liens_utiles.json"
-CHAMPS = ("titre", "url", "description", "theme")
+CHAMPS = ("titre", "sigle", "url", "description", "theme")
 
 
 class LienInvalide(ValueError):
@@ -23,6 +24,9 @@ def valider_liens(liens: list) -> list:
             raise LienInvalide(f"Lien {nom} : champs manquants ou vides {', '.join(manquants)}.")
         if not lien["url"].startswith("https://"):
             raise LienInvalide(f"Lien {nom} : l'adresse doit commencer par https://.")
+        probleme = erreur_sigle(lien["sigle"], obligatoire=True)
+        if probleme:
+            raise LienInvalide(f"Lien {nom} : {probleme}.")
         if lien["theme"] not in THEMES:
             raise LienInvalide(f"Lien {nom} : thème inconnu {lien['theme']}.")
     return liens

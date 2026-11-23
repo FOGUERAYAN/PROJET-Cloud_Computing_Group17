@@ -15,6 +15,7 @@ from app.services.lieux import (
 LIEU = {
     "id": "test",
     "nom": "Lieu de test",
+    "sigle": "",
     "categorie": "decouverte",
     "sous_categorie": "a_voir",
     "theme": "bons-plans",

@@ -7,6 +7,7 @@ from app.routes import enregistrer_routes
 from app.services.entraide import charger_entraide
 from app.services.liens import charger_liens
 from app.services.lieux import charger_lieux
+from app.services.modules import charger_modules
 from app.services.planning import charger_catalogue
 from app.services.storage import creer_stockage
 
@@ -31,6 +32,7 @@ def create_app(config=None, stockage=None):
     app.extensions["lieux"] = charger_lieux()
     app.extensions["entraide"] = charger_entraide()
     app.extensions["liens"] = charger_liens()
+    app.extensions["modules"] = charger_modules()
 
     enregistrer_routes(app)
     return app

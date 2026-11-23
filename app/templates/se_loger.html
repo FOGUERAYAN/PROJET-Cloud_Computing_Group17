@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import bandeau, mise_en_page, bouton_officiel, mention_verification %}
+{% from "_macros.html" import bandeau, mise_en_page, bouton_officiel, pastille, mention_verification %}
 {% block titre %}Se loger | Cap90{% endblock %}
 {% block bandeau %}{{ bandeau("Se loger", "Commence par les sites officiels. Ils sont gratuits et plus sûrs.", ["logement"]) }}{% endblock %}
 {% block contenu %}
@@ -19,7 +19,7 @@
 <div class="grille grille-2">
   {% for site in sites %}
   <article class="carte carte-lieu">
-    <h3><i class="ti ti-home" aria-hidden="true"></i> {{ site.nom }}</h3>
+    <div class="titre-avec-pastille">{{ pastille(site.sigle, "logement") }}<h3>{{ site.nom }}</h3></div>
     <p>{{ site.description }}</p>
     {% if site.lien_officiel %}{{ bouton_officiel(site.lien_officiel) }}{% else %}<p class="discret">Lien à compléter.</p>{% endif %}
   </article>

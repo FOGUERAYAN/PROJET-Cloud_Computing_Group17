@@ -4,6 +4,7 @@ import json
 from datetime import date
 from pathlib import Path
 
+from app.services.sigles import erreur_sigle
 from app.services.themes import THEMES
 
 CHEMIN_ENTRAIDE = Path(__file__).resolve().parent.parent / "data" / "entraide.json"
@@ -17,6 +18,7 @@ TYPES = {
 FREQUENCES = ("chaque semaine", "une semaine sur deux", "variable")
 CHAMPS = (
     "nom",
+    "sigle",
     "type",
     "theme",
     "description",
@@ -49,6 +51,9 @@ def valider_entraide(entrees: list) -> list:
             raise EntraideInvalide(f"Entrée {nom} : champs vides {', '.join(vides)}.")
         if entree["type"] not in TYPES:
             raise EntraideInvalide(f"Entrée {nom} : type inconnu {entree['type']}.")
+        probleme = erreur_sigle(entree["sigle"], obligatoire=True)
+        if probleme:
+            raise EntraideInvalide(f"Entrée {nom} : {probleme}.")
         if entree["theme"] not in THEMES:
             raise EntraideInvalide(f"Entrée {nom} : thème inconnu {entree['theme']}.")
         if entree["jour_semaine"] and entree["jour_semaine"] not in JOURS:

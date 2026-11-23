@@ -2,6 +2,7 @@
   {
     "id": "cpam",
     "nom": "CPAM de Lille-Douai",
+    "sigle": "CPAM",
     "categorie": "utile",
     "sous_categorie": "sante",
     "theme": "sante",
@@ -19,6 +20,7 @@
   {
     "id": "caf",
     "nom": "CAF du Nord",
+    "sigle": "CAF",
     "categorie": "utile",
     "sous_categorie": "aides",
     "theme": "logement",
@@ -36,6 +38,7 @@
   {
     "id": "crous",
     "nom": "Crous de Lille Nord-Pas de Calais",
+    "sigle": "Crous",
     "categorie": "utile",
     "sous_categorie": "vie_etudiante",
     "theme": "logement",
@@ -53,6 +56,7 @@
   {
     "id": "office_tourisme",
     "nom": "Office de tourisme de Lille",
+    "sigle": "OT",
     "categorie": "utile",
     "sous_categorie": "tourisme",
     "theme": "bons-plans",
@@ -70,6 +74,7 @@
   {
     "id": "grand_place",
     "nom": "Grand Place",
+    "sigle": "",
     "categorie": "decouverte",
     "sous_categorie": "a_voir",
     "theme": "bons-plans",
@@ -87,6 +92,7 @@
   {
     "id": "vieille_bourse",
     "nom": "Vieille Bourse",
+    "sigle": "",
     "categorie": "decouverte",
     "sous_categorie": "a_voir",
     "theme": "bons-plans",
@@ -104,6 +110,7 @@
   {
     "id": "citadelle",
     "nom": "Citadelle et bois de Boulogne",
+    "sigle": "",
     "categorie": "decouverte",
     "sous_categorie": "a_voir",
     "theme": "bons-plans",
@@ -121,6 +128,7 @@
   {
     "id": "vieux_lille",
     "nom": "Vieux-Lille",
+    "sigle": "",
     "categorie": "decouverte",
     "sous_categorie": "a_voir",
     "theme": "bons-plans",
@@ -138,6 +146,7 @@
   {
     "id": "gare_saint_sauveur",
     "nom": "Gare Saint-Sauveur",
+    "sigle": "",
     "categorie": "decouverte",
     "sous_categorie": "sortir",
     "theme": "bons-plans",
@@ -155,6 +164,7 @@
   {
     "id": "marche_wazemmes",
     "nom": "Marché de Wazemmes",
+    "sigle": "",
     "categorie": "manger",
     "sous_categorie": "marche",
     "theme": "bons-plans",
@@ -172,6 +182,7 @@
   {
     "id": "restaurants_crous",
     "nom": "Restaurants universitaires du Crous",
+    "sigle": "RU",
     "categorie": "manger",
     "sous_categorie": "restaurant_universitaire",
     "theme": "bons-plans",
@@ -189,6 +200,7 @@
   {
     "id": "crous_logement",
     "nom": "Trouver un logement Crous",
+    "sigle": "Crous",
     "categorie": "logement",
     "sous_categorie": "site",
     "theme": "logement",
@@ -206,6 +218,7 @@
   {
     "id": "lokaviz",
     "nom": "Lokaviz",
+    "sigle": "Lv",
     "categorie": "logement",
     "sous_categorie": "site",
     "theme": "logement",
@@ -223,6 +236,7 @@
   {
     "id": "studapart_ulille",
     "nom": "Studapart de l'Université de Lille",
+    "sigle": "St",
     "categorie": "logement",
     "sous_categorie": "site",
     "theme": "logement",

@@ -4,6 +4,7 @@ import json
 from datetime import date
 from pathlib import Path
 
+from app.services.sigles import erreur_sigle
 from app.services.themes import THEMES
 
 CHEMIN_LIEUX = Path(__file__).resolve().parent.parent / "data" / "lieux.json"
@@ -12,6 +13,7 @@ CATEGORIES = ("utile", "logement", "decouverte", "manger")
 CHAMPS = (
     "id",
     "nom",
+    "sigle",
     "categorie",
     "sous_categorie",
     "theme",
@@ -67,6 +69,9 @@ def valider_lieux(lieux: list) -> list:
         vus.add(lieu["id"])
         if lieu["categorie"] not in CATEGORIES:
             raise LieuInvalide(f"Lieu {nom} : catégorie inconnue {lieu['categorie']}.")
+        probleme = erreur_sigle(lieu["sigle"], obligatoire=lieu["categorie"] in ("utile", "logement"))
+        if probleme:
+            raise LieuInvalide(f"Lieu {nom} : {probleme}.")
         if lieu["theme"] not in THEMES:
             raise LieuInvalide(f"Lieu {nom} : thème inconnu {lieu['theme']}.")
         if lieu["photo"] and not lieu["credit_photo"].strip():

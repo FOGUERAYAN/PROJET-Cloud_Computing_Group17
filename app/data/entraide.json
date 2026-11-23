@@ -1,6 +1,7 @@
 [
   {
     "nom": "Linkee Lille",
+    "sigle": "Lk",
     "type": "aide_alimentaire",
     "theme": "entraide",
     "description": "Linkee organise des distributions alimentaires gratuites pour les étudiants. Les produits viennent d'invendus collectés auprès de commerces et de producteurs.",
@@ -15,6 +16,7 @@
   },
   {
     "nom": "Cop1 Lille",
+    "sigle": "C1",
     "type": "aide_alimentaire",
     "theme": "entraide",
     "description": "Cop1 est une association de solidarité étudiante. Elle organise des distributions de produits alimentaires et d'hygiène.",
@@ -29,6 +31,7 @@
   },
   {
     "nom": "AGORAé Cité Scientifique",
+    "sigle": "Ag",
     "type": "epicerie",
     "theme": "entraide",
     "description": "L'AGORAé est une épicerie solidaire étudiante sur le campus Cité Scientifique. On y trouve des produits à prix réduits et un lieu d'accueil.",
@@ -43,6 +46,7 @@
   },
   {
     "nom": "Repas à 1 euro du Crous",
+    "sigle": "Crous",
     "type": "aide_alimentaire",
     "theme": "entraide",
     "description": "Les restaurants universitaires du Crous proposent un repas complet à 1 euro pour certains étudiants. Renseigne-toi sur les conditions auprès du Crous.",

@@ -55,9 +55,15 @@ def test_liens_filtres_par_theme():
 @pytest.mark.parametrize(
     "lien, message",
     [
-        ({"titre": "A", "url": "http://a.fr", "description": "d", "theme": "papiers"}, "https://"),
-        ({"titre": "A", "url": "https://a.fr", "description": "d", "theme": "inconnu"}, "thème inconnu"),
-        ({"titre": "A", "url": "https://a.fr", "theme": "papiers"}, "description"),
+        (
+            {"titre": "A", "sigle": "Ab", "url": "http://a.fr", "description": "d", "theme": "papiers"},
+            "https://",
+        ),
+        (
+            {"titre": "A", "sigle": "Ab", "url": "https://a.fr", "description": "d", "theme": "inconnu"},
+            "thème inconnu",
+        ),
+        ({"titre": "A", "sigle": "Ab", "url": "https://a.fr", "theme": "papiers"}, "description"),
     ],
 )
 def test_lien_invalide_refuse(lien, message):

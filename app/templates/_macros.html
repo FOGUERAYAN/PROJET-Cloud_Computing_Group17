@@ -30,6 +30,11 @@
 </div>
 {% endmacro %}
 
+{# Pastille de monogramme : remplace les logos officiels (marques protégées). #}
+{% macro pastille(sigle, famille="demarche") %}
+<span class="pastille-sigle pastille-{{ famille }}" aria-hidden="true">{{ sigle }}</span>
+{% endmacro %}
+
 {% macro mention_verification() %}
 <p class="discret"><i class="ti ti-info-circle" aria-hidden="true"></i> Ces informations sont en cours de vérification. Consulte toujours le site officiel.</p>
 {% endmacro %}
@@ -115,9 +120,10 @@
 {% endmacro %}
 
 {# Colonne latérale : progression, prochaine étape, semaine à Lille, liens utiles du thème. #}
-{% macro colonne_laterale(themes=[], avec_prochaine=True) %}
+{% macro colonne_laterale(themes=[], avec_prochaine=True, avec_suivi=True) %}
 {% set d = donnees_laterales(themes) %}
-{% if d.progression %}
+{% if not avec_suivi %}
+{% elif d.progression %}
 <section class="carte carte-progression">
   <p class="surtitre-carte"><i class="ti ti-chart-donut" aria-hidden="true"></i> Ta progression</p>
   <div class="progression-ligne">
@@ -149,9 +155,9 @@
 {% endmacro %}
 
 {# Mise en page des modules : contenu principal (2/3) et colonne latérale (1/3). #}
-{% macro mise_en_page(themes=[], avec_prochaine=True) %}
+{% macro mise_en_page(themes=[], avec_prochaine=True, avec_suivi=True) %}
 <div class="mise-en-page">
   <div class="principal">{{ caller() }}</div>
-  <aside class="laterale" aria-label="Ton suivi et les liens utiles">{{ colonne_laterale(themes, avec_prochaine) }}</aside>
+  <aside class="laterale" aria-label="Ton suivi et les liens utiles">{{ colonne_laterale(themes, avec_prochaine, avec_suivi) }}</aside>
 </div>
 {% endmacro %}

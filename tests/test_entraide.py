@@ -15,6 +15,7 @@ from app.services.entraide import (
 
 ENTREE = {
     "nom": "Association de test",
+    "sigle": "At",
     "type": "aide_alimentaire",
     "theme": "entraide",
     "description": "Une distribution.",

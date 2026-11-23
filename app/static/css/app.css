@@ -1279,3 +1279,51 @@ legend {
     aspect-ratio: 21 / 9;
   }
 }
+
+/* Pastille de monogramme (à la place des logos officiels) */
+.titre-avec-pastille {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 8px;
+}
+
+.titre-avec-pastille h2,
+.titre-avec-pastille h3 {
+  margin: 0;
+}
+
+.pastille-sigle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--couleur-primaire);
+  color: var(--couleur-surface);
+  font-family: var(--police-titre);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.pastille-entraide {
+  background: var(--couleur-alerte);
+  color: var(--couleur-texte);
+}
+
+.pastille-logement {
+  background: var(--couleur-texte);
+  color: var(--couleur-surface);
+}
+
+/* Pied de page */
+.pied p {
+  margin: 4px 0;
+}
+
+.mention-independance {
+  font-size: 0.8rem;
+}

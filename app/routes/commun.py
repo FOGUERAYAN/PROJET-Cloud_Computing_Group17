@@ -7,6 +7,7 @@ from flask import current_app, g, session
 from app.services.entraide import grouper_par_jour, nom_du_jour
 from app.services.liens import filtrer_par_themes
 from app.services.planning import jour_courant, jours_restants
+from app.services.sigles import famille_du_theme
 from app.services.suivi import prochaine_etape, progression
 from app.services.themes import THEMES
 
@@ -102,6 +103,7 @@ def installer(app) -> None:
     app.jinja_env.globals.update(
         donnees_laterales=donnees_laterales,
         libelles_themes=THEMES,
+        famille_du_theme=famille_du_theme,
     )
     app.jinja_env.filters["majuscule_initiale"] = majuscule_initiale
 

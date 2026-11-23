@@ -131,6 +131,26 @@ dans `medias/<id>.jpg` et remplit `photo` et `credit_photo` dans `lieux.json`.
 3. Lancer le téléchargement (option `--lieux id1,id2` pour ne traiter que certains lieux), relire les crédits,
    puis envoyer les photos avec `python scripts/charger_medias.py`.
 
+Options utiles :
+
+- `--requete "texte"` : recherche personnalisée, pour un seul lieu (`--lieux id`) ou pour un bandeau.
+- `--bandeau decouvrir` : photo de bandeau d'un module, enregistrée dans `app/data/modules.json`
+  (champ `photo_bandeau`), fichier `medias/bandeau-<module>.jpg`.
+- `--propositions 3` : en `--dry-run`, affiche plusieurs images possibles ; `--choix 2` télécharge la deuxième.
+
+```
+python scripts/telecharger_photos.py --dry-run --propositions 3 --lieux citadelle --requete "Citadelle de Lille Porte Royale"
+python scripts/telecharger_photos.py --lieux citadelle --requete "Citadelle de Lille Porte Royale" --choix 2
+```
+
+## Organismes et associations : pas de logo
+
+Les logos officiels sont des marques protégées et pourraient laisser croire à un partenariat.
+Les organismes, les sites de logement et les associations sont représentés par une pastille de monogramme
+(champ `sigle`, 2 à 5 caractères, dans `lieux.json`, `entraide.json` et `liens_utiles.json`).
+Couleur : primaire pour les démarches, alerte pour l'entraide, bleu nuit pour le logement.
+Cap90 est un projet étudiant indépendant, sans lien avec les organismes cités.
+
 ## Lancer les tests
 
 Les tests n'ont pas besoin d'Azurite : ils utilisent le stockage en mémoire.

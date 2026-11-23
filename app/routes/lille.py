@@ -3,6 +3,7 @@
 from flask import Blueprint, abort, current_app, render_template, request
 
 from app.services.lieux import FILTRES_DECOUVRIR, filtrer_decouvrir, par_categorie, trouver
+from app.services.modules import photo_du_module
 
 bp = Blueprint("lille", __name__, url_prefix="/lille")
 
@@ -36,7 +37,7 @@ def decouvrir():
         lieux=filtrer_decouvrir(lieux(), filtre),
         filtres={code: libelle for code, (libelle, _) in FILTRES_DECOUVRIR.items()},
         filtre_actif=filtre,
-        photo_bandeau=trouver(lieux(), "vieux_lille"),
+        photo_bandeau=photo_du_module(current_app.extensions["modules"], "decouvrir", "Découvrir Lille"),
     )
 
 

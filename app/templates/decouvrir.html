@@ -3,7 +3,7 @@
 {% block titre %}Découvrir Lille | Cap90{% endblock %}
 {% block bandeau %}{{ bandeau("Découvrir Lille", "Les lieux à voir, où manger pas cher et où sortir.", ["bons-plans"], lieu=photo_bandeau) }}{% endblock %}
 {% block contenu %}
-{% call mise_en_page(["bons-plans"]) %}
+{% call mise_en_page(["bons-plans"], avec_suivi=False) %}
 <nav class="filtres" aria-label="Filtrer par catégorie">
   <a class="filtre" href="{{ url_for('lille.decouvrir') }}" {% if not filtre_actif %}aria-current="true"{% endif %}>Tout</a>
   {% for code, libelle in filtres.items() %}

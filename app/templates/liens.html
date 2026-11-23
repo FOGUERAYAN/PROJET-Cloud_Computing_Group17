@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import bandeau, mise_en_page, bouton_officiel %}
+{% from "_macros.html" import bandeau, mise_en_page, bouton_officiel, pastille %}
 {% block titre %}Liens utiles | Cap90{% endblock %}
 {% block bandeau %}
 {{ bandeau("Liens utiles" ~ (" : " ~ themes[theme] if theme else ""), "Les sites officiels pour faire tes démarches en toute sécurité.", themes.keys() | list, actif=theme) }}
@@ -10,7 +10,7 @@
 <div class="grille">
   {% for lien in liens %}
   <article class="carte">
-    <h2>{{ lien.titre }}</h2>
+    <div class="titre-avec-pastille">{{ pastille(lien.sigle, famille_du_theme(lien.theme)) }}<h2>{{ lien.titre }}</h2></div>
     <p>{{ lien.description }}</p>
     {{ bouton_officiel(lien.url) }}
   </article>
