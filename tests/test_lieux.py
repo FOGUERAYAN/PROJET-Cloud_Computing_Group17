@@ -159,6 +159,6 @@ def test_detail_lieu(client):
 
 
 def test_photo_absente_affiche_bloc_icone(client):
-    texte = client.get("/lille/decouvrir/grand_place").get_data(as_text=True)
+    texte = client.get("/lille/decouvrir/citadelle").get_data(as_text=True)
     assert 'class="photo-absente"' in texte
     assert "<img" not in texte
