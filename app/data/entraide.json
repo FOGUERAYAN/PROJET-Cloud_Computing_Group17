@@ -5,12 +5,21 @@
     "type": "aide_alimentaire",
     "theme": "entraide",
     "description": "Linkee organise des distributions alimentaires gratuites pour les étudiants. Les produits viennent d'invendus collectés auprès de commerces et de producteurs.",
-    "jour_semaine": "",
-    "frequence": "variable",
-    "horaires": "",
-    "adresse": "",
-    "conditions": "",
-    "lien_inscription": "",
+    "creneaux": [
+      {
+        "jour_semaine": "mardi",
+        "horaires": "18 h à 19 h 30",
+        "adresse": "Bazaar St-So, 292 rue Camille Guérin, Lille"
+      },
+      {
+        "jour_semaine": "mercredi",
+        "horaires": "18 h à 19 h 30",
+        "adresse": "Chaud Bouillon, 70 passage de l'International, Lille"
+      }
+    ],
+    "frequence": "chaque semaine",
+    "conditions": "Viens avec un sac et ta carte étudiante ou un certificat de scolarité à jour.",
+    "lien_inscription": "https://linkee.fillout.com/inscriptions",
     "verifie_le": "",
     "a_verifier": true
   },
@@ -20,12 +29,16 @@
     "type": "aide_alimentaire",
     "theme": "entraide",
     "description": "Cop1 est une association de solidarité étudiante. Elle organise des distributions de produits alimentaires et d'hygiène.",
-    "jour_semaine": "",
-    "frequence": "variable",
-    "horaires": "",
-    "adresse": "",
+    "creneaux": [
+      {
+        "jour_semaine": "jeudi",
+        "horaires": "",
+        "adresse": "Maison des Associations"
+      }
+    ],
+    "frequence": "une semaine sur deux",
     "conditions": "",
-    "lien_inscription": "",
+    "lien_inscription": "https://cop1.fr/ville/lille/",
     "verifie_le": "",
     "a_verifier": true
   },
@@ -35,10 +48,8 @@
     "type": "epicerie",
     "theme": "entraide",
     "description": "L'AGORAé est une épicerie solidaire étudiante sur le campus Cité Scientifique. On y trouve des produits à prix réduits et un lieu d'accueil.",
-    "jour_semaine": "",
+    "creneaux": [],
     "frequence": "variable",
-    "horaires": "",
-    "adresse": "",
     "conditions": "",
     "lien_inscription": "",
     "verifie_le": "",
@@ -50,10 +61,8 @@
     "type": "aide_alimentaire",
     "theme": "entraide",
     "description": "Les restaurants universitaires du Crous proposent un repas complet à 1 euro pour certains étudiants. Renseigne-toi sur les conditions auprès du Crous.",
-    "jour_semaine": "",
+    "creneaux": [],
     "frequence": "variable",
-    "horaires": "",
-    "adresse": "",
     "conditions": "",
     "lien_inscription": "https://www.crous-lille.fr",
     "verifie_le": "",

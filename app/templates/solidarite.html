@@ -3,15 +3,17 @@
 {% block titre %}Entraide | Cap90{% endblock %}
 {% block bandeau %}{{ bandeau("Cette semaine à Lille", "Aide alimentaire, épiceries solidaires et bénévolat près de chez toi.", ["entraide", "bons-plans"]) }}{% endblock %}
 
-{% macro entree_agenda(entree) %}
+{% macro entree_agenda(entree, creneau=None) %}
 {% set libelle, icone = types[entree.type] %}
 <article class="entree">
   <p class="entree-type"><i class="ti ti-{{ icone }}" aria-hidden="true"></i> {{ libelle }}</p>
   <div class="titre-avec-pastille">{{ pastille(entree.sigle, "entraide") }}<h3>{{ entree.nom }}</h3></div>
-  <p>{{ entree.description }}</p>
-  {% if entree.horaires %}<p class="ligne-info"><i class="ti ti-clock" aria-hidden="true"></i> {{ entree.horaires }}</p>{% endif %}
+  <p class="entree-description">{{ entree.description }}</p>
+  {% for c in ([creneau] if creneau else entree.creneaux) %}
+  {% if c.horaires %}<p class="ligne-info"><i class="ti ti-clock" aria-hidden="true"></i> {{ c.horaires }}</p>{% endif %}
+  {% if c.adresse %}<p class="ligne-info"><i class="ti ti-map-pin" aria-hidden="true"></i> {{ c.adresse }}</p>{% endif %}
+  {% endfor %}
   <p class="ligne-info"><i class="ti ti-repeat" aria-hidden="true"></i> Fréquence : {{ entree.frequence }}</p>
-  {% if entree.adresse %}<p class="ligne-info"><i class="ti ti-map-pin" aria-hidden="true"></i> {{ entree.adresse }}</p>{% endif %}
   {% if entree.conditions %}<p class="ligne-info"><i class="ti ti-user-check" aria-hidden="true"></i> {{ entree.conditions }}</p>{% endif %}
   {% if entree.lien_inscription %}{{ bouton_officiel(entree.lien_inscription) }}{% else %}<p class="discret">Lien officiel à compléter.</p>{% endif %}
 </article>
@@ -23,8 +25,8 @@
   {% for jour in jours %}
   <section class="carte jour{% if jour == jour_courant %} jour-courant{% endif %}" aria-labelledby="jour-{{ jour }}">
     <h2 id="jour-{{ jour }}">{{ jour | capitalize }}{% if jour == jour_courant %} <span class="badge badge-aujourdhui">Aujourd'hui</span>{% endif %}</h2>
-    {% for entree in semaine[jour] %}
-      {{ entree_agenda(entree) }}
+    {% for entree, creneau in semaine[jour] %}
+      {{ entree_agenda(entree, creneau) }}
     {% else %}
       <p class="discret">Rien de prévu pour l'instant.</p>
     {% endfor %}

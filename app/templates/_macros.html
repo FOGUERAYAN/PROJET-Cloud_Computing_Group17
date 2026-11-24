@@ -1,11 +1,14 @@
 {# Photo d'un lieu, servie par /medias. Un bloc de couleur avec l'icône de la catégorie reste
    dessous : il apparaît si le lieu n'a pas de photo ou si le fichier manque dans le stockage. #}
-{% macro photo(lieu, classe="") %}
+{% macro photo(lieu, classe="", prioritaire=False) %}
 <figure class="photo {{ classe }}">
   <div class="photo-cadre">
     <div class="photo-absente" aria-hidden="true"><i class="ti ti-{{ icones_categories[lieu.categorie] }}"></i></div>
     {% if lieu.photo %}
-    <img src="{{ url_for('medias.lire', nom=lieu.photo) }}" alt="{{ lieu.nom }}" loading="lazy" onerror="this.remove()">
+    <img src="{{ url_for('medias.lire', nom=lieu.photo) }}" alt="{{ lieu.nom }}"
+         width="{{ lieu.photo_largeur or 1200 }}" height="{{ lieu.photo_hauteur or 800 }}"
+         {% if prioritaire %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %}
+         decoding="async" onerror="this.remove()">
     {% endif %}
   </div>
   {% if lieu.photo %}<figcaption class="credit">{{ lieu.credit_photo }}</figcaption>{% endif %}
@@ -61,7 +64,7 @@
       {% if caller %}{{ caller() }}{% endif %}
       {{ chips(themes, actif) }}
     </div>
-    {% if lieu %}<div class="bandeau-photo">{{ photo(lieu, "photo-bandeau") }}</div>{% endif %}
+    {% if lieu %}<div class="bandeau-photo">{{ photo(lieu, "photo-bandeau", prioritaire=True) }}</div>{% endif %}
   </div>
 </section>
 {% endmacro %}
@@ -103,20 +106,22 @@
 </section>
 {% endmacro %}
 
-{% macro liste_semaine(entrees) %}
+{# Prochains rendez-vous d'entraide datés. Rien n'est affiché s'il n'y en a aucun. #}
+{% macro liste_semaine(rendez_vous) %}
+{% if rendez_vous %}
 <section class="carte" aria-labelledby="titre-semaine">
   <p class="surtitre-carte"><i class="ti ti-calendar-week" aria-hidden="true"></i> Cette semaine à Lille</p>
   <h2 id="titre-semaine" class="visuellement-cache">Cette semaine à Lille</h2>
-  {% for entree in entrees %}
+  {% for rdv in rendez_vous %}
   <div class="mini-entree">
-    <strong>{{ entree.nom }}</strong>
-    <span class="discret">{{ entree.jour_semaine | capitalize if entree.jour_semaine else "Jour à confirmer" }}</span>
+    <strong>{{ rdv.nom }}</strong>
+    <span class="discret">{{ "Aujourd'hui" if rdv.aujourd_hui else rdv.jour | capitalize }}{% if rdv.horaires %}, {{ rdv.horaires }}{% endif %}</span>
+    {% if rdv.adresse %}<span class="discret">{{ rdv.adresse }}</span>{% endif %}
   </div>
-  {% else %}
-  <p class="discret">Rien de prévu pour l'instant.</p>
   {% endfor %}
   <a class="lien-fort" href="{{ url_for('solidarite.index') }}">Tout l'agenda <i class="ti ti-arrow-narrow-right" aria-hidden="true"></i></a>
 </section>
+{% endif %}
 {% endmacro %}
 
 {# Colonne latérale : progression, prochaine étape, semaine à Lille, liens utiles du thème. #}

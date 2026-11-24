@@ -22,10 +22,8 @@ CHAMPS = (
     "type",
     "theme",
     "description",
-    "jour_semaine",
+    "creneaux",
     "frequence",
-    "horaires",
-    "adresse",
     "conditions",
     "lien_inscription",
     "verifie_le",
@@ -56,8 +54,15 @@ def valider_entraide(entrees: list) -> list:
             raise EntraideInvalide(f"Entrée {nom} : {probleme}.")
         if entree["theme"] not in THEMES:
             raise EntraideInvalide(f"Entrée {nom} : thème inconnu {entree['theme']}.")
-        if entree["jour_semaine"] and entree["jour_semaine"] not in JOURS:
-            raise EntraideInvalide(f"Entrée {nom} : jour_semaine doit être un jour en minuscules ou vide.")
+        if not isinstance(entree["creneaux"], list):
+            raise EntraideInvalide(f"Entrée {nom} : creneaux doit être une liste.")
+        for creneau in entree["creneaux"]:
+            if set(creneau) != {"jour_semaine", "horaires", "adresse"}:
+                raise EntraideInvalide(f"Entrée {nom} : un créneau a jour_semaine, horaires et adresse.")
+            if creneau["jour_semaine"] and creneau["jour_semaine"] not in JOURS:
+                raise EntraideInvalide(
+                    f"Entrée {nom} : jour_semaine doit être un jour en minuscules ou vide."
+                )
         if entree["frequence"] not in FREQUENCES:
             raise EntraideInvalide(f"Entrée {nom} : fréquence inconnue {entree['frequence']}.")
         if entree["lien_inscription"] and not entree["lien_inscription"].startswith("https://"):
@@ -84,12 +89,38 @@ def nom_du_jour(jour: date) -> str:
 
 
 def grouper_par_jour(entrees: list) -> tuple[dict[str, list], list]:
-    """Retourne les entrées rangées par jour (lundi à dimanche) et celles dont le jour est à confirmer."""
+    """Rendez-vous rangés par jour (lundi à dimanche) et entrées sans aucun jour connu.
+
+    Chaque jour contient des couples (entrée, créneau) : une entrée avec deux créneaux
+    apparaît sous ses deux jours.
+    """
     semaine = {jour: [] for jour in JOURS}
     sans_jour = []
     for entree in entrees:
-        if entree["jour_semaine"]:
-            semaine[entree["jour_semaine"]].append(entree)
-        else:
+        avec_jour = [c for c in entree["creneaux"] if c["jour_semaine"]]
+        for creneau in avec_jour:
+            semaine[creneau["jour_semaine"]].append((entree, creneau))
+        if not avec_jour:
             sans_jour.append(entree)
     return semaine, sans_jour
+
+
+def prochains_creneaux(entrees: list, aujourd_hui: date, limite: int = 3) -> list[dict]:
+    """Rendez-vous avec un jour connu, à partir d'aujourd'hui sur les sept prochains jours."""
+    semaine, _ = grouper_par_jour(entrees)
+    debut = aujourd_hui.weekday()
+    ordre = [JOURS[(debut + decalage) % 7] for decalage in range(7)]
+    resultat = []
+    for jour in ordre:
+        for entree, creneau in semaine[jour]:
+            resultat.append(
+                {
+                    "nom": entree["nom"],
+                    "sigle": entree["sigle"],
+                    "jour": jour,
+                    "aujourd_hui": jour == ordre[0],
+                    "horaires": creneau["horaires"],
+                    "adresse": creneau["adresse"],
+                }
+            )
+    return resultat[:limite]
