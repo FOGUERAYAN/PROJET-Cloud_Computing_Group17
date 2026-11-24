@@ -173,6 +173,41 @@ Les organismes, les sites de logement et les associations sont représentés par
 Couleur : primaire pour les démarches, alerte pour l'entraide, bleu nuit pour le logement.
 Cap90 est un projet étudiant indépendant, sans lien avec les organismes cités.
 
+## Coffre-fort
+
+Chaque utilisateur dépose ses justificatifs (PDF, JPG ou PNG, 10 Mo au maximum) dans le conteneur Blob privé
+`coffre`, sous son propre préfixe : `<id utilisateur>/<identifiant aléatoire>`. Le nom d'origine est gardé dans
+les métadonnées du blob et rendu au téléchargement (en-tête `Content-Disposition`).
+
+- L'extension et la signature réelle du fichier sont vérifiées (un programme renommé en `.pdf` est refusé).
+- Liste, téléchargement et suppression passent toujours par l'application, qui ne lit que le préfixe
+  de l'utilisateur connecté. Le conteneur n'est jamais exposé directement.
+- "Supprimer mes données" (Mon profil) efface aussi tous les fichiers du coffre.
+- Pour la démonstration, n'utiliser que de faux documents.
+
+### Lien de partage de 24 h
+
+Le mode est choisi automatiquement selon la connexion au stockage :
+
+| Environnement | Lien | Fonctionnement |
+| --- | --- | --- |
+| Azure (`STORAGE_MODE=azure`) | User Delegation SAS | L'application obtient une clé de délégation avec `get_user_delegation_key` grâce à la Managed Identity (`DefaultAzureCredential`), puis signe une SAS en lecture seule, HTTPS uniquement, pour un seul blob, qui expire au bout de 24 h. Aucune clé de compte n'est utilisée. |
+| Azurite ou mémoire | Lien interne signé | Azurite ne gère pas la délégation Microsoft Entra ID. L'application crée un jeton signé avec `itsdangerous` et `SECRET_KEY`, valable 24 h, servi par `/partage/<jeton>` en lecture seule. |
+
+Supprimer le fichier rend le lien inutilisable avant la fin des 24 h.
+
+### Droits à donner sur Azure (RBAC)
+
+Rôles à attribuer à la Managed Identity de la VM, au niveau du compte de stockage :
+
+| Rôle | Utilité |
+| --- | --- |
+| Storage Blob Data Contributor | Lire, écrire et supprimer les blobs (médias et coffre-fort). |
+| Storage Blob Delegator | Obtenir la clé de délégation pour signer les liens de partage (User Delegation SAS). |
+
+Côté infrastructure, l'accès anonyme aux blobs doit être désactivé au niveau du compte de stockage
+(Terraform : `allow_nested_items_to_be_public = false`).
+
 ## Lancer les tests
 
 Les tests n'ont pas besoin d'Azurite : ils utilisent le stockage en mémoire.
