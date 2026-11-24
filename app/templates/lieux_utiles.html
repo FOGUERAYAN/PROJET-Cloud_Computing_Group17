@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% from "_macros.html" import bandeau, mise_en_page, photo, pastille, adresse, liens, mention_verification %}
+{% block titre %}Lieux utiles | Cap90{% endblock %}
+{% block bandeau %}{{ bandeau("Lieux utiles", "Les adresses à connaître pour tes démarches à Lille.", ["sante", "logement", "papiers"]) }}{% endblock %}
+{% block contenu %}
+{% call mise_en_page(["sante", "logement"]) %}
+{{ mention_verification() }}
+<div class="grille grille-2">
+  {% for lieu in lieux %}
+  <article class="carte carte-lieu" id="{{ lieu.id }}">
+    {% if lieu.photo or not lieu.sigle %}{{ photo(lieu) }}{% endif %}
+    <div class="titre-avec-pastille">
+      {% if lieu.sigle and not lieu.photo %}{{ pastille(lieu.sigle, "demarche") }}{% endif %}
+      <h2>{{ lieu.nom }}</h2>
+    </div>
+    {{ adresse(lieu) }}
+    <p>{{ lieu.description }}</p>
+    {{ liens(lieu) }}
+  </article>
+  {% endfor %}
+</div>
+{% endcall %}
+{% endblock %}

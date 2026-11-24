@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% from "_macros.html" import bandeau, anneau, carte_prochaine, liste_semaine %}
+
+{% block bandeau %}
+{% call bandeau(
+  "Tes 90 premiers jours, étape par étape" if suivi else "Bienvenue sur Cap90",
+  "Ton planning, tes démarches et les bons plans de la métropole au même endroit." if suivi
+    else "Cap90 t'accompagne pendant tes 90 premiers jours à Lille. Réponds à 5 questions et obtiens un planning daté de tes démarches.",
+  lieu=grand_place,
+  surtitre="Bienvenue à Lille"
+) %}
+  {% if suivi %}
+  <div class="bandeau-progression">
+    {{ anneau(suivi.pourcentage, suivi.pourcentage ~ " %", suivi.faites ~ " démarches faites sur " ~ suivi.total, "anneau-clair") }}
+    <p><strong>{{ suivi.faites }} sur {{ suivi.total }}</strong> démarches faites<br><span>Jour {{ suivi.jour }} sur 90</span></p>
+  </div>
+  <a class="bouton bouton-clair" href="{{ url_for('planning.index') }}"><i class="ti ti-calendar-event" aria-hidden="true"></i> Voir mon planning</a>
+  {% else %}
+  <a class="bouton bouton-clair" href="{{ url_for('profil.formulaire') }}"><i class="ti ti-user-plus" aria-hidden="true"></i> Créer mon profil</a>
+  {% endif %}
+{% endcall %}
+{% endblock %}
+
+{% block contenu %}
+{% set tuiles = [
+  ("planning.index", "calendar-event", "Mon planning", "Tes démarches datées."),
+  ("lille.se_loger", "home", "Se loger", "Sites sûrs et anti-arnaques."),
+  ("lille.lieux_utiles", "building-community", "Lieux utiles", "CPAM, CAF, Crous."),
+  ("lille.decouvrir", "building-castle", "Découvrir Lille", "À voir, manger, sortir."),
+  ("travail.index", "briefcase", "Travailler", "Tes heures et tes droits."),
+  ("solidarite.index", "heart-handshake", "Entraide", "Aide alimentaire, bénévolat."),
+  ("coffre.index", "lock", "Coffre-fort", "Tes justificatifs."),
+  ("profil.formulaire", "user-circle", "Mon profil", "Tes réponses et tes badges."),
+] %}
+<nav class="tuiles" aria-label="Accès rapides">
+  {% for route, icone, titre, texte in tuiles %}
+  <a class="tuile" href="{{ url_for(route) }}">
+    <i class="ti ti-{{ icone }}" aria-hidden="true"></i>
+    <strong>{{ titre }}</strong>
+    <span>{{ texte }}</span>
+  </a>
+  {% endfor %}
+</nav>
+
+<div class="deux-colonnes">
+  {% if suivi %}
+  {{ carte_prochaine(suivi.prochaine, "accueil") }}
+  {% else %}
+  <section class="carte carte-prochaine">
+    <p class="surtitre-carte"><i class="ti ti-target-arrow" aria-hidden="true"></i> Ta prochaine étape</p>
+    <h2>Créer ton profil</h2>
+    <p>5 questions suffisent pour calculer ton planning.</p>
+    <a class="lien-fort" href="{{ url_for('profil.formulaire') }}">Commencer <i class="ti ti-arrow-narrow-right" aria-hidden="true"></i></a>
+  </section>
+  {% endif %}
+  {{ liste_semaine(semaine) }}
+</div>
+{% endblock %}

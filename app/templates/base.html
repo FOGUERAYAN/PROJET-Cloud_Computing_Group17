@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titre %}Cap90{% endblock %}</title>
+  <link rel="preload" href="{{ url_for('static', filename='vendor/fonts/inter-latin-400-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/fonts/fonts.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/tabler-icons/tabler-icons.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+  {% set section = request.blueprint %}
+  {% set onglets_haut = [
+    ("planning", url_for("planning.index"), "calendar-event", "Planning"),
+    ("lille", url_for("lille.index"), "map-2", "Lille"),
+    ("travail", url_for("travail.index"), "briefcase", "Travailler"),
+    ("solidarite", url_for("solidarite.index"), "heart-handshake", "Entraide"),
+    ("coffre", url_for("coffre.index"), "lock", "Coffre-fort"),
+  ] %}
+  {% set onglets_bas = [
+    ("planning", url_for("planning.index"), "calendar-event", "Planning"),
+    ("lille", url_for("lille.index"), "map-2", "Lille"),
+    ("travail", url_for("travail.index"), "briefcase", "Travailler"),
+    ("solidarite", url_for("solidarite.index"), "heart-handshake", "Entraide"),
+    ("profil", url_for("profil.formulaire"), "user-circle", "Profil"),
+  ] %}
+
+  <a class="lien-evitement" href="#contenu">Aller au contenu</a>
+
+  <header class="entete">
+    <div class="entete-interieur">
+      <a class="logo" href="{{ url_for('accueil.index') }}"><i class="ti ti-compass" aria-hidden="true"></i> Cap90</a>
+      <nav class="navigation" aria-label="Navigation principale">
+        {% for code, lien, icone, libelle in onglets_haut %}
+          {% if code == "lille" %}
+          <div class="menu-deroulant">
+            <a href="{{ lien }}" {% if section == code %}aria-current="page"{% endif %}><i class="ti ti-{{ icone }}" aria-hidden="true"></i> {{ libelle }} <i class="ti ti-chevron-down" aria-hidden="true"></i></a>
+            <ul class="sous-menu">
+              <li><a href="{{ url_for('lille.lieux_utiles') }}"><i class="ti ti-building-community" aria-hidden="true"></i> Lieux utiles</a></li>
+              <li><a href="{{ url_for('lille.se_loger') }}"><i class="ti ti-home" aria-hidden="true"></i> Se loger</a></li>
+              <li><a href="{{ url_for('lille.decouvrir') }}"><i class="ti ti-building-castle" aria-hidden="true"></i> Découvrir</a></li>
+            </ul>
+          </div>
+          {% else %}
+          <a href="{{ lien }}" {% if section == code %}aria-current="page"{% endif %}><i class="ti ti-{{ icone }}" aria-hidden="true"></i> {{ libelle }}</a>
+          {% endif %}
+        {% endfor %}
+      </nav>
+      <a class="pastille-profil" href="{{ url_for('profil.formulaire') }}" {% if section == "profil" %}aria-current="page"{% endif %}
+         aria-label="{{ 'Mon profil' if profil_connecte else 'Créer mon profil' }}" title="{{ 'Mon profil' if profil_connecte else 'Créer mon profil' }}">
+        {% if initiales %}{{ initiales }}{% else %}<i class="ti ti-user" aria-hidden="true"></i>{% endif %}
+      </a>
+    </div>
+  </header>
+
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <div class="toast" role="status" aria-live="polite">
+    <i class="ti ti-circle-check" aria-hidden="true"></i>
+    <span>{{ messages | join(" ") }}</span>
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  {% block bandeau %}{% endblock %}
+
+  <main class="contenu" id="contenu">
+    {% block contenu %}{% endblock %}
+  </main>
+
+  <footer class="pied">
+    <p>Cap90, tes 90 premiers jours à Lille.</p>
+    <p class="mention-independance">Cap90 est un projet étudiant indépendant, sans lien avec les organismes cités.</p>
+  </footer>
+
+  <nav class="barre-onglets" aria-label="Navigation mobile">
+    {% for code, lien, icone, libelle in onglets_bas %}
+    <a href="{{ lien }}" {% if section == code %}aria-current="page"{% endif %}><i class="ti ti-{{ icone }}" aria-hidden="true"></i><span>{{ libelle }}</span></a>
+    {% endfor %}
+  </nav>
+</body>
+</html>

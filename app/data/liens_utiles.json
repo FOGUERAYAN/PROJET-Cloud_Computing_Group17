@@ -1,0 +1,65 @@
+[
+  {
+    "titre": "Service-Public.fr",
+    "sigle": "SP",
+    "url": "https://www.service-public.gouv.fr",
+    "description": "Le site officiel de l'administration française pour toutes tes démarches.",
+    "theme": "papiers"
+  },
+  {
+    "titre": "Administration des étrangers en France",
+    "sigle": "AEF",
+    "url": "https://administration-etrangers-en-france.interieur.gouv.fr",
+    "description": "Validation du visa, titre de séjour et suivi de tes demandes en ligne.",
+    "theme": "papiers"
+  },
+  {
+    "titre": "Ameli",
+    "sigle": "Am",
+    "url": "https://www.ameli.fr",
+    "description": "L'Assurance Maladie : immatriculation, carte Vitale et remboursements.",
+    "theme": "sante"
+  },
+  {
+    "titre": "CAF",
+    "sigle": "CAF",
+    "url": "https://www.caf.fr",
+    "description": "Les aides au logement et la simulation de tes droits.",
+    "theme": "logement"
+  },
+  {
+    "titre": "Trouver un logement Crous",
+    "sigle": "Crous",
+    "url": "https://trouverunlogement.lescrous.fr",
+    "description": "Les résidences étudiantes du Crous.",
+    "theme": "logement"
+  },
+  {
+    "titre": "Lokaviz",
+    "sigle": "Lv",
+    "url": "https://www.lokaviz.fr",
+    "description": "La centrale du logement étudiant du Crous.",
+    "theme": "logement"
+  },
+  {
+    "titre": "Crous Lille Nord-Pas de Calais",
+    "sigle": "Crous",
+    "url": "https://www.crous-lille.fr",
+    "description": "Bourses, restauration universitaire et aides du Crous de Lille.",
+    "theme": "bons-plans"
+  },
+  {
+    "titre": "Etudiant.gouv.fr",
+    "sigle": "Et",
+    "url": "https://www.etudiant.gouv.fr",
+    "description": "Le portail de la vie étudiante : aides, logement, santé et jobs.",
+    "theme": "bons-plans"
+  },
+  {
+    "titre": "Travailler pendant tes études (F2713)",
+    "sigle": "SP",
+    "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2713",
+    "description": "Les règles officielles pour les étudiants étrangers qui travaillent.",
+    "theme": "travail"
+  }
+]

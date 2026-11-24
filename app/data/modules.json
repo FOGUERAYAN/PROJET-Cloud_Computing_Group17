@@ -1,0 +1,36 @@
+{
+  "planning": {
+    "photo_bandeau": "",
+    "credit_photo": ""
+  },
+  "lieux_utiles": {
+    "photo_bandeau": "",
+    "credit_photo": ""
+  },
+  "se_loger": {
+    "photo_bandeau": "",
+    "credit_photo": ""
+  },
+  "decouvrir": {
+    "photo_bandeau": "bandeau-decouvrir.webp",
+    "credit_photo": "Velvet, CC BY-SA 4.0, via Wikimedia Commons",
+    "photo_largeur": 1000,
+    "photo_hauteur": 892
+  },
+  "solidarite": {
+    "photo_bandeau": "",
+    "credit_photo": ""
+  },
+  "travailler": {
+    "photo_bandeau": "",
+    "credit_photo": ""
+  },
+  "profil": {
+    "photo_bandeau": "",
+    "credit_photo": ""
+  },
+  "coffre": {
+    "photo_bandeau": "",
+    "credit_photo": ""
+  }
+}

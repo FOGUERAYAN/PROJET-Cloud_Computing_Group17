@@ -1,0 +1,17 @@
+[
+  {"code": "lille", "nom": "Lille"},
+  {"code": "villeneuve-d-ascq", "nom": "Villeneuve-d'Ascq"},
+  {"code": "roubaix", "nom": "Roubaix"},
+  {"code": "tourcoing", "nom": "Tourcoing"},
+  {"code": "lomme", "nom": "Lomme"},
+  {"code": "loos", "nom": "Loos"},
+  {"code": "ronchin", "nom": "Ronchin"},
+  {"code": "croix", "nom": "Croix"},
+  {"code": "marcq-en-baroeul", "nom": "Marcq-en-Barœul"},
+  {"code": "lambersart", "nom": "Lambersart"},
+  {"code": "la-madeleine", "nom": "La Madeleine"},
+  {"code": "mons-en-baroeul", "nom": "Mons-en-Barœul"},
+  {"code": "hellemmes", "nom": "Hellemmes"},
+  {"code": "wasquehal", "nom": "Wasquehal"},
+  {"code": "autre", "nom": "Autre commune de la métropole"}
+]

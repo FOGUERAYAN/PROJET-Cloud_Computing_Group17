@@ -32,3 +32,14 @@ __queuestorage__/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Secrets d'infrastructure (Terraform, certificats, clés)
+*.tfvars
+*.tfvars.json
+*.tfstate
+*.tfstate.*
+.terraform/
+*.pem
+*.key
+*.pfx
+secrets/

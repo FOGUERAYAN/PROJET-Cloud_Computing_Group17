@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% from "_macros.html" import bandeau, mise_en_page, anneau, barre_pieces, bouton_officiel %}
+{% block titre %}Mon planning | Cap90{% endblock %}
+
+{% block bandeau %}
+{% call bandeau("Mon planning", (profil.pseudo ~ ", " if profil.pseudo else "") ~ ville ~ ".", ["papiers", "sante", "banque", "logement"]) %}
+  <div class="bandeau-progression">
+    {{ anneau(pourcentage, faites ~ "/" ~ total, faites ~ " démarches faites sur " ~ total, "anneau-clair") }}
+    <p><strong>Jour {{ jour }} sur {{ duree }}</strong><br><span>{{ faites }} sur {{ total }} démarches faites</span></p>
+  </div>
+{% endcall %}
+{% endblock %}
+
+{% macro carte_etape(etape) %}
+<li id="{{ etape.code }}" class="carte etape{% if etape.fait %} fait{% elif etape.urgente %} urgente{% endif %}">
+  <div class="etape-entete">
+    <h3>{{ etape.titre }}</h3>
+    {% if etape.fait %}
+      <span class="badge badge-fait">Fait</span>
+    {% elif etape.jours_restants < 0 %}
+      <span class="badge badge-alerte">En retard de {{ -etape.jours_restants }} jour{{ 's' if -etape.jours_restants > 1 }}</span>
+    {% elif etape.urgente %}
+      <span class="badge badge-alerte">{{ etape.jours_restants }} jour{{ 's' if etape.jours_restants > 1 }} restant{{ 's' if etape.jours_restants > 1 }}</span>
+    {% else %}
+      <span class="badge">{{ etape.jours_restants }} jours restants</span>
+    {% endif %}
+  </div>
+  <p class="ligne-info">
+    {% if etape.urgente %}<i class="ti ti-alert-triangle icone-alerte" aria-hidden="true"></i>{% else %}<i class="ti ti-clock" aria-hidden="true"></i>{% endif %}
+    Avant le {{ etape.date_limite }}
+  </p>
+
+  {% if etape.pieces %}
+  <p class="sous-titre">Pièces à préparer</p>
+  <ul class="pieces-cases">
+    {% for piece in etape.pieces %}
+    <li>
+      <form method="post" action="{{ url_for('planning.basculer_piece_prete', code=etape.code, indice=piece.indice) }}">
+        <button class="case-piece" type="submit" aria-pressed="{{ 'true' if piece.prete else 'false' }}">
+          <span class="case" aria-hidden="true">{% if piece.prete %}<i class="ti ti-check"></i>{% endif %}</span>
+          {{ piece.nom }}
+        </button>
+      </form>
+    </li>
+    {% endfor %}
+  </ul>
+  {{ barre_pieces(etape.pieces_pretes, etape.pieces | length) }}
+  {% endif %}
+
+  {% if etape.lieu and (etape.lieu.adresse or etape.lieu.metro) %}
+  <div class="ou-aller">
+    <p class="sous-titre"><i class="ti ti-map-pin" aria-hidden="true"></i> Où aller</p>
+    <p>{{ etape.lieu.nom }}{% if etape.lieu.adresse %}, {{ etape.lieu.adresse }}{% endif %}</p>
+    {% if etape.lieu.metro %}<p class="ligne-info"><i class="ti ti-train" aria-hidden="true"></i> Métro {{ etape.lieu.metro }}</p>{% endif %}
+    {% if etape.lieu.lien_carte %}<a href="{{ etape.lieu.lien_carte }}" target="_blank" rel="noopener noreferrer"><i class="ti ti-map-2" aria-hidden="true"></i> Voir sur la carte</a>{% endif %}
+  </div>
+  {% endif %}
+  {% if etape.conseil %}<p class="conseil"><i class="ti ti-bulb" aria-hidden="true"></i> {{ etape.conseil }}</p>{% endif %}
+
+  <div class="actions">
+    <form method="post" action="{{ url_for('planning.basculer', code=etape.code) }}">
+      {% if etape.fait %}
+      <button class="bouton bouton-secondaire" type="submit"><i class="ti ti-arrow-back-up" aria-hidden="true"></i> Remettre à faire</button>
+      {% else %}
+      <button class="bouton" type="submit"><i class="ti ti-check" aria-hidden="true"></i> C'est fait</button>
+      {% endif %}
+    </form>
+    {% if etape.lien_officiel %}{{ bouton_officiel(etape.lien_officiel) }}{% endif %}
+  </div>
+</li>
+{% endmacro %}
+
+{% block contenu %}
+{% call mise_en_page(["papiers", "sante", "banque", "logement"], avec_prochaine=False) %}
+
+  {% if prochaine %}
+  <section class="carte carte-prochaine carte-prochaine-planning" aria-labelledby="titre-prochaine-planning">
+    <p class="surtitre-carte"><i class="ti ti-target-arrow" aria-hidden="true"></i> Ta prochaine étape</p>
+    <h2 id="titre-prochaine-planning">{{ prochaine.titre }}</h2>
+    <p class="ligne-info"><i class="ti ti-calendar" aria-hidden="true"></i> Avant le {{ prochaine.date_limite }},
+      {% if prochaine.jours_restants < 0 %}en retard de {{ -prochaine.jours_restants }} jour{{ 's' if -prochaine.jours_restants > 1 }}{% else %}dans {{ prochaine.jours_restants }} jour{{ 's' if prochaine.jours_restants > 1 }}{% endif %}</p>
+    {{ barre_pieces(prochaine.pieces_pretes, prochaine.pieces | length) }}
+    <div class="actions">
+      <a class="bouton bouton-secondaire" href="#{{ prochaine.code }}"><i class="ti ti-list-check" aria-hidden="true"></i> Préparer mes pièces</a>
+      {% if prochaine.lien_officiel %}{{ bouton_officiel(prochaine.lien_officiel) }}{% endif %}
+    </div>
+  </section>
+  {% endif %}
+
+  {% for groupe in groupes %}
+  <details class="groupe groupe-{{ groupe.code }}" {% if groupe.ouvert %}open{% endif %}>
+    <summary>
+      <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+      <span class="groupe-titre">{{ groupe.libelle }}</span>
+      <span class="badge{% if groupe.code == 'en_retard' %} badge-alerte{% endif %}">{{ groupe.etapes | length }}</span>
+    </summary>
+    <ol class="etapes">
+      {% for etape in groupe.etapes %}{{ carte_etape(etape) }}{% endfor %}
+    </ol>
+  </details>
+  {% else %}
+  <p class="carte">Aucune démarche pour ce statut.</p>
+  {% endfor %}
+
+  <section class="carte" aria-labelledby="titre-badges">
+    <h2 id="titre-badges">Mes badges</h2>
+    <ul class="badges">
+      {% for badge in badges %}
+      <li class="badge-succes{% if not badge.obtenu %} verrouille{% endif %}">
+        <i class="ti ti-{{ badge.icone if badge.obtenu else 'lock' }}" aria-hidden="true"></i>
+        <span><strong>{{ badge.titre }}</strong><br><span class="discret">{{ badge.description }}{% if not badge.obtenu %} Pas encore obtenu.{% endif %}</span></span>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  <p class="discret"><i class="ti ti-info-circle" aria-hidden="true"></i> Les délais sont indicatifs et restent à vérifier sur service-public.fr.</p>
+{% endcall %}
+{% endblock %}

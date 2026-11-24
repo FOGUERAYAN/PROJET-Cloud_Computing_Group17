@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from "_macros.html" import bandeau, mise_en_page %}
+{% block titre %}Lille | Cap90{% endblock %}
+{% block bandeau %}{{ bandeau("Lille", "Les adresses utiles, le logement et les bons plans de la métropole.", ["sante", "logement", "bons-plans"]) }}{% endblock %}
+{% block contenu %}
+{% call mise_en_page(["logement", "bons-plans"]) %}
+<div class="liste-acces">
+  <a class="carte acces-carte" href="{{ url_for('lille.lieux_utiles') }}">
+    <i class="ti ti-building-community" aria-hidden="true"></i>
+    <span><strong>Lieux utiles</strong><br>CPAM, CAF, Crous et office de tourisme.</span>
+  </a>
+  <a class="carte acces-carte" href="{{ url_for('lille.se_loger') }}">
+    <i class="ti ti-home" aria-hidden="true"></i>
+    <span><strong>Se loger</strong><br>Sites recommandés et conseils contre les arnaques.</span>
+  </a>
+  <a class="carte acces-carte" href="{{ url_for('lille.decouvrir') }}">
+    <i class="ti ti-building-castle" aria-hidden="true"></i>
+    <span><strong>Découvrir Lille</strong><br>À voir, manger pas cher et sortir.</span>
+  </a>
+</div>
+{% endcall %}
+{% endblock %}

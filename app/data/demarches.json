@@ -1,0 +1,119 @@
+[
+  {
+    "code": "visa",
+    "titre": "Valider son visa long séjour",
+    "theme": "papiers",
+    "statuts": [
+      "etudiant",
+      "salarie"
+    ],
+    "delai_jours": 60,
+    "pieces": [
+      "Passeport avec le visa",
+      "Date d'entrée en France",
+      "Adresse en France",
+      "Carte bancaire pour la taxe"
+    ],
+    "lien_officiel": "https://administration-etrangers-en-france.interieur.gouv.fr",
+    "lieu_id": "",
+    "conseil": "Fais la démarche en ligne dès que tu as une adresse.",
+    "a_verifier": true
+  },
+  {
+    "code": "securite_sociale",
+    "titre": "S'inscrire à la sécurité sociale",
+    "theme": "sante",
+    "statuts": [
+      "etudiant",
+      "salarie",
+      "refugie"
+    ],
+    "delai_jours": 30,
+    "pieces": [
+      "Pièce d'identité",
+      "Acte de naissance",
+      "Justificatif de domicile",
+      "RIB"
+    ],
+    "lien_officiel": "https://www.service-public.fr/particuliers/vosdroits/F34703",
+    "lieu_id": "cpam",
+    "conseil": "Garde une copie de chaque document envoyé.",
+    "a_verifier": true
+  },
+  {
+    "code": "compte_bancaire",
+    "titre": "Ouvrir un compte bancaire",
+    "theme": "banque",
+    "statuts": [
+      "etudiant",
+      "salarie",
+      "refugie"
+    ],
+    "delai_jours": 14,
+    "pieces": [
+      "Pièce d'identité",
+      "Justificatif de domicile"
+    ],
+    "lien_officiel": "https://www.service-public.fr/particuliers/vosdroits/F2369",
+    "lieu_id": "",
+    "conseil": "En cas de refus, tu peux demander le droit au compte.",
+    "a_verifier": true
+  },
+  {
+    "code": "aide_logement",
+    "titre": "Demander une aide au logement à la CAF",
+    "theme": "logement",
+    "statuts": [
+      "etudiant",
+      "salarie",
+      "refugie"
+    ],
+    "delai_jours": 45,
+    "pieces": [
+      "Bail ou contrat de location",
+      "RIB",
+      "Titre de séjour ou visa validé"
+    ],
+    "lien_officiel": "https://www.caf.fr",
+    "lieu_id": "caf",
+    "conseil": "La demande se fait en ligne sur le site de la CAF.",
+    "a_verifier": true
+  },
+  {
+    "code": "medecin_traitant",
+    "titre": "Déclarer un médecin traitant",
+    "theme": "sante",
+    "statuts": [
+      "etudiant",
+      "salarie",
+      "refugie"
+    ],
+    "delai_jours": 75,
+    "pieces": [
+      "Carte Vitale ou attestation de droits"
+    ],
+    "lien_officiel": "https://www.service-public.fr/particuliers/vosdroits/F163",
+    "lieu_id": "",
+    "conseil": "Le médecin fait la déclaration lors d'une consultation.",
+    "a_verifier": true
+  },
+  {
+    "code": "assurance_habitation",
+    "titre": "Souscrire une assurance habitation",
+    "theme": "logement",
+    "statuts": [
+      "etudiant",
+      "salarie",
+      "refugie"
+    ],
+    "delai_jours": 7,
+    "pieces": [
+      "Bail ou contrat de location",
+      "Pièce d'identité"
+    ],
+    "lien_officiel": "https://www.service-public.fr/particuliers/vosdroits/F2033",
+    "lieu_id": "",
+    "conseil": "Le propriétaire peut demander l'attestation à la remise des clés.",
+    "a_verifier": true
+  }
+]

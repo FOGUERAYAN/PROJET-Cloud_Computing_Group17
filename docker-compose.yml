@@ -1,0 +1,37 @@
+# Développement local : application Cap90 et émulateur Azurite.
+#
+# La chaîne UseDevelopmentStorage=true pointe toujours vers 127.0.0.1.
+# L'application partage donc le réseau du conteneur Azurite (network_mode),
+# ce qui évite d'écrire la moindre clé de compte. Le port 8000 de l'application
+# est pour cette raison publié par le service azurite.
+
+services:
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite:3.35.0
+    command: azurite --blobHost 0.0.0.0 --tableHost 0.0.0.0 --location /data --skipApiVersionCheck --loose
+    ports:
+      - "10000:10000"
+      - "10002:10002"
+      - "${APP_PORT:-8000}:8000"
+    volumes:
+      - azurite-data:/data
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('net').connect(10002, '127.0.0.1').on('connect', () => process.exit(0)).on('error', () => process.exit(1))"]
+      interval: 2s
+      timeout: 2s
+      retries: 15
+
+  app:
+    build: .
+    network_mode: "service:azurite"
+    depends_on:
+      azurite:
+        condition: service_healthy
+    restart: on-failure
+    environment:
+      SECRET_KEY: ${SECRET_KEY:?Copiez .env.example vers .env et renseignez SECRET_KEY}
+      STORAGE_MODE: azurite
+      AZURE_STORAGE_CONNECTION_STRING: UseDevelopmentStorage=true
+
+volumes:
+  azurite-data:

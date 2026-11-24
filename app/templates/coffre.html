@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% from "_macros.html" import bandeau, mise_en_page %}
+{% block titre %}Coffre-fort | Cap90{% endblock %}
+{% block bandeau %}{{ bandeau("Coffre-fort", "Un espace pour ranger tes justificatifs.", ["papiers"]) }}{% endblock %}
+{% block contenu %}
+{% call mise_en_page(["papiers"]) %}
+<section class="carte attente carte-bientot" aria-labelledby="titre-coffre">
+  <i class="ti ti-lock icone-grande" aria-hidden="true"></i>
+  <p class="badge badge-alerte">Disponible très bientôt</p>
+  <h2 id="titre-coffre">Ton coffre-fort de justificatifs</h2>
+  <p>Tu pourras déposer tes justificatifs en sécurité, puis les partager avec un lien valable 24 h.</p>
+  <ul class="liste-avantages">
+    <li><i class="ti ti-shield-lock" aria-hidden="true"></i> Dépôt sécurisé : passeport, bail, attestations.</li>
+    <li><i class="ti ti-clock-share" aria-hidden="true"></i> Partage par un lien qui expire au bout de 24 h.</li>
+    <li><i class="ti ti-trash" aria-hidden="true"></i> Suppression à tout moment depuis ton profil.</li>
+  </ul>
+</section>
+{% endcall %}
+{% endblock %}

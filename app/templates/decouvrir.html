@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% from "_macros.html" import bandeau, mise_en_page, photo %}
+{% block titre %}Découvrir Lille | Cap90{% endblock %}
+{% block bandeau %}{{ bandeau("Découvrir Lille", "Les lieux à voir, où manger pas cher et où sortir.", ["bons-plans"], lieu=photo_bandeau) }}{% endblock %}
+{% block contenu %}
+{% call mise_en_page(["bons-plans"], avec_suivi=False) %}
+<nav class="filtres" aria-label="Filtrer par catégorie">
+  <a class="filtre" href="{{ url_for('lille.decouvrir') }}" {% if not filtre_actif %}aria-current="true"{% endif %}>Tout</a>
+  {% for code, libelle in filtres.items() %}
+  <a class="filtre" href="{{ url_for('lille.decouvrir', filtre=code) }}" {% if filtre_actif == code %}aria-current="true"{% endif %}>{{ libelle }}</a>
+  {% endfor %}
+</nav>
+
+<div class="grille grille-2">
+  {% for lieu in lieux %}
+  <a class="carte carte-lieu carte-cliquable" href="{{ url_for('lille.detail', identifiant=lieu.id) }}">
+    {{ photo(lieu, "photo-grande") }}
+    <h2>{{ lieu.nom }}</h2>
+    <p>{{ lieu.description | premiere_phrase }}</p>
+    {% if lieu.prix_indicatif %}<p class="prix"><i class="ti ti-coin-euro" aria-hidden="true"></i> {{ lieu.prix_indicatif }}</p>{% endif %}
+  </a>
+  {% else %}
+  <p class="carte">Aucun lieu dans cette catégorie pour l'instant.</p>
+  {% endfor %}
+</div>
+{% endcall %}
+{% endblock %}
