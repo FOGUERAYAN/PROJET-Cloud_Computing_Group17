@@ -115,6 +115,25 @@ le conteneur de l'application partage le réseau du conteneur Azurite (`network_
 
 Le conteneur `medias-lille` est privé : les images passent toujours par la route `/medias/<nom>`.
 
+## Profil : langues et communes
+
+La langue maternelle (code ISO 639-1, liste dans `app/data/langues.json`) et la commune de la métropole
+(liste dans `app/data/communes.json`, Lille par défaut) se choisissent dans des listes, vérifiées côté serveur.
+"Autre langue" affiche un champ "Précise ta langue" en CSS (`:has()`), sans JavaScript.
+
+Les profils créés avant ce changement se migrent avec :
+
+```
+python scripts/migrer_profils.py --dry-run
+python scripts/migrer_profils.py
+```
+
+## Polices et icônes
+
+Tabler Icons 3.19.0 (licence MIT), Inter et Poppins (licence SIL OFL 1.1) sont hébergées dans
+`app/static/vendor/` avec leurs licences. L'application ne charge aucune ressource depuis un domaine extérieur,
+ce que vérifie un test.
+
 ## Récupérer des photos libres (Wikimedia Commons)
 
 `scripts/telecharger_photos.py` cherche une photo pour chaque lieu sans photo (sauf les sites de logement),
@@ -130,6 +149,9 @@ dans `medias/<id>.jpg` et remplit `photo` et `credit_photo` dans `lieux.json`.
 
 3. Lancer le téléchargement (option `--lieux id1,id2` pour ne traiter que certains lieux), relire les crédits,
    puis envoyer les photos avec `python scripts/charger_medias.py`.
+   Ce script convertit d'abord les JPG et PNG en WebP (1200 px au plus, environ 150 Ko, Pillow),
+   met à jour les noms et les dimensions dans `lieux.json` et `modules.json`, et affiche le poids
+   avant et après conversion.
 
 Options utiles :
 
