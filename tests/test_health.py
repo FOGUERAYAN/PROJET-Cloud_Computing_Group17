@@ -10,5 +10,5 @@ def test_pages_publiques_repondent(client):
 
 
 def test_pages_attente_affichent_le_message(client):
-    for chemin in ("/coffre", "/solidarite"):
-        assert "Disponible prochainement." in client.get(chemin).get_data(as_text=True)
+    assert "Disponible très bientôt" in client.get("/coffre").get_data(as_text=True)
+    assert "Disponible prochainement." in client.get("/solidarite").get_data(as_text=True)

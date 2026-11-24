@@ -24,7 +24,7 @@ FORMULAIRE = {
     "statut": "etudiant",
     "ville": "lille",
     "date_arrivee": "2026-09-01",
-    "langue": "wolof",
+    "langue": "wo",
 }
 
 
@@ -241,9 +241,10 @@ def test_ville_et_initiales():
     assert initiales(None) == ""
 
 
-def test_ville_enregistree_avec_majuscule(client, stockage):
+def test_commune_enregistree_par_code_et_affichee_par_nom(client, stockage):
     client.post("/profil", data=FORMULAIRE)
-    assert stockage.lire_profil(id_session(client))["ville"] == "Lille"
+    assert stockage.lire_profil(id_session(client))["ville"] == "lille"
+    assert "Awa Diop, Lille." in client.get("/planning").get_data(as_text=True)
 
 
 def test_accueil_sans_et_avec_profil(client):

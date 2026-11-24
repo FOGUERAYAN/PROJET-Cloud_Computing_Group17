@@ -61,7 +61,7 @@ def test_mention_independance_en_pied_de_page(client):
 def test_decouvrir_colonne_laterale_sans_suivi(client):
     client.post(
         "/profil",
-        data={"statut": "etudiant", "ville": "Lille", "date_arrivee": "2026-09-01", "langue": "Wolof"},
+        data={"statut": "etudiant", "ville": "lille", "date_arrivee": "2026-09-01", "langue": "wo"},
     )
     texte = client.get("/lille/decouvrir").get_data(as_text=True)
     laterale = texte[texte.index('class="laterale"') :]

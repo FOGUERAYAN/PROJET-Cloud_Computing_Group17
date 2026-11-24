@@ -85,9 +85,9 @@ def test_heures_restantes():
 
 FORMULAIRE = {
     "statut": "etudiant",
-    "ville": "Lille",
+    "ville": "lille",
     "date_arrivee": "2025-08-20",
-    "langue": "Wolof",
+    "langue": "wo",
 }
 
 

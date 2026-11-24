@@ -6,9 +6,9 @@ from app.services.storage import TABLE_ANNONCES, TABLE_ETAPES, TABLE_PROFILS
 FORMULAIRE = {
     "pseudo": "Awa",
     "statut": "etudiant",
-    "ville": "Lille",
+    "ville": "lille",
     "date_arrivee": "2026-09-01",
-    "langue": "Wolof",
+    "langue": "wo",
     "interets": ["sport", "cuisine"],
 }
 
@@ -27,7 +27,7 @@ def test_creation_profil_enregistre_profil_et_etapes(client, stockage):
 
     profil = stockage.lire_profil(id_utilisateur)
     assert profil["statut"] == "etudiant"
-    assert profil["ville"] == "Lille"
+    assert profil["ville"] == "lille"
     assert profil["date_arrivee"] == "2026-09-01"
     assert profil["interets"] == "sport,cuisine"
     assert profil["cree_le"]
