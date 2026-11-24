@@ -1,0 +1,34 @@
+/* Polices hébergées dans l'application (sous-ensemble latin, paquets @fontsource 5.1.0).
+   Inter et Poppins sont distribuées sous licence SIL Open Font License 1.1 :
+   voir LICENSE-Inter.txt et LICENSE-Poppins.txt dans ce dossier. */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("inter-latin-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("inter-latin-500-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("poppins-latin-500-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("poppins-latin-600-normal.woff2") format("woff2");
+}
