@@ -65,11 +65,13 @@
     "metro": "Rihour",
     "lien_officiel": "https://www.lilletourism.com",
     "lien_carte": "https://www.openstreetmap.org/search?query=Palais%20Rihour%2C%20Lille",
-    "photo": "office_tourisme.jpg",
+    "photo": "office_tourisme.webp",
     "credit_photo": "Chabe01, CC BY-SA 4.0, via Wikimedia Commons",
     "prix_indicatif": "",
     "verifie_le": "",
-    "a_verifier": true
+    "a_verifier": true,
+    "photo_largeur": 1200,
+    "photo_hauteur": 800
   },
   {
     "id": "grand_place",
@@ -83,11 +85,13 @@
     "metro": "Rihour",
     "lien_officiel": "",
     "lien_carte": "https://www.openstreetmap.org/search?query=Grand%20Place%2C%20Lille",
-    "photo": "grand_place.jpg",
+    "photo": "grand_place.webp",
     "credit_photo": "Velvet, CC BY-SA 3.0, via Wikimedia Commons",
     "prix_indicatif": "",
     "verifie_le": "",
-    "a_verifier": true
+    "a_verifier": true,
+    "photo_largeur": 1200,
+    "photo_hauteur": 952
   },
   {
     "id": "vieille_bourse",
@@ -101,11 +105,13 @@
     "metro": "Rihour",
     "lien_officiel": "",
     "lien_carte": "https://www.openstreetmap.org/search?query=Vieille%20Bourse%2C%20Lille",
-    "photo": "vieille_bourse.jpg",
+    "photo": "vieille_bourse.webp",
     "credit_photo": "kallerna, CC BY-SA 4.0, via Wikimedia Commons",
     "prix_indicatif": "",
     "verifie_le": "",
-    "a_verifier": true
+    "a_verifier": true,
+    "photo_largeur": 1200,
+    "photo_hauteur": 804
   },
   {
     "id": "citadelle",
@@ -119,11 +125,13 @@
     "metro": "",
     "lien_officiel": "",
     "lien_carte": "https://www.openstreetmap.org/search?query=Citadelle%20de%20Lille",
-    "photo": "citadelle.jpg",
+    "photo": "citadelle.webp",
     "credit_photo": "Velvet, CC BY-SA 4.0, via Wikimedia Commons",
     "prix_indicatif": "",
     "verifie_le": "",
-    "a_verifier": true
+    "a_verifier": true,
+    "photo_largeur": 1100,
+    "photo_hauteur": 780
   },
   {
     "id": "vieux_lille",
@@ -137,11 +145,13 @@
     "metro": "",
     "lien_officiel": "",
     "lien_carte": "https://www.openstreetmap.org/search?query=Vieux-Lille",
-    "photo": "vieux_lille.jpg",
+    "photo": "vieux_lille.webp",
     "credit_photo": "Pierre André Leclercq, CC BY 4.0, via Wikimedia Commons",
     "prix_indicatif": "",
     "verifie_le": "",
-    "a_verifier": true
+    "a_verifier": true,
+    "photo_largeur": 1000,
+    "photo_hauteur": 877
   },
   {
     "id": "gare_saint_sauveur",
@@ -155,11 +165,13 @@
     "metro": "",
     "lien_officiel": "",
     "lien_carte": "https://www.openstreetmap.org/search?query=Gare%20Saint-Sauveur%2C%20Lille",
-    "photo": "gare_saint_sauveur.jpg",
+    "photo": "gare_saint_sauveur.webp",
     "credit_photo": "Velvet, CC BY-SA 4.0, via Wikimedia Commons",
     "prix_indicatif": "",
     "verifie_le": "",
-    "a_verifier": true
+    "a_verifier": true,
+    "photo_largeur": 900,
+    "photo_hauteur": 600
   },
   {
     "id": "marche_wazemmes",
@@ -173,11 +185,13 @@
     "metro": "",
     "lien_officiel": "",
     "lien_carte": "https://www.openstreetmap.org/search?query=March%C3%A9%20de%20Wazemmes%2C%20Lille",
-    "photo": "marche_wazemmes.jpg",
+    "photo": "marche_wazemmes.webp",
     "credit_photo": "Pierre André, CC BY-SA 4.0, via Wikimedia Commons",
     "prix_indicatif": "",
     "verifie_le": "",
-    "a_verifier": true
+    "a_verifier": true,
+    "photo_largeur": 1200,
+    "photo_hauteur": 798
   },
   {
     "id": "restaurants_crous",
@@ -191,11 +205,13 @@
     "metro": "",
     "lien_officiel": "https://www.crous-lille.fr",
     "lien_carte": "",
-    "photo": "restaurants_crous.jpg",
+    "photo": "restaurants_crous.webp",
     "credit_photo": "Jiel Beaumadier (jiel.b.free.fr), CC BY-SA 3.0, via Wikimedia Commons",
     "prix_indicatif": "",
     "verifie_le": "",
-    "a_verifier": true
+    "a_verifier": true,
+    "photo_largeur": 1200,
+    "photo_hauteur": 900
   },
   {
     "id": "crous_logement",

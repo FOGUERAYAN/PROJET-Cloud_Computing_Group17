@@ -4,6 +4,7 @@ import json
 from datetime import date
 from pathlib import Path
 
+from app.services.modules import dimensions_valides
 from app.services.sigles import erreur_sigle
 from app.services.themes import THEMES
 
@@ -74,6 +75,10 @@ def valider_lieux(lieux: list) -> list:
             raise LieuInvalide(f"Lieu {nom} : {probleme}.")
         if lieu["theme"] not in THEMES:
             raise LieuInvalide(f"Lieu {nom} : thème inconnu {lieu['theme']}.")
+        if not dimensions_valides(lieu):
+            raise LieuInvalide(
+                f"Lieu {nom} : photo_largeur et photo_hauteur doivent être des entiers positifs."
+            )
         if lieu["photo"] and not lieu["credit_photo"].strip():
             raise LieuInvalide(f"Lieu {nom} : le crédit photo est obligatoire quand il y a une photo.")
         if lieu["lien_carte"] and not lieu["lien_carte"].startswith(PREFIXE_CARTE):

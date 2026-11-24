@@ -6,6 +6,14 @@ from pathlib import Path
 CHEMIN_MODULES = Path(__file__).resolve().parent.parent / "data" / "modules.json"
 
 
+def dimensions_valides(fiche: dict) -> bool:
+    """Largeur et hauteur facultatives, mais des entiers positifs quand elles sont présentes."""
+    return all(
+        isinstance(fiche.get(cle, 1), int) and fiche.get(cle, 1) > 0
+        for cle in ("photo_largeur", "photo_hauteur")
+    )
+
+
 class ModuleInvalide(ValueError):
     """Erreur levée quand modules.json ne respecte pas le format attendu."""
 
@@ -17,6 +25,10 @@ def valider_modules(modules: dict) -> dict:
         manquants = [c for c in ("photo_bandeau", "credit_photo") if c not in module]
         if manquants:
             raise ModuleInvalide(f"Module {nom} : champs manquants {', '.join(manquants)}.")
+        if not dimensions_valides(module):
+            raise ModuleInvalide(
+                f"Module {nom} : photo_largeur et photo_hauteur doivent être des entiers positifs."
+            )
         if module["photo_bandeau"] and not module["credit_photo"].strip():
             raise ModuleInvalide(f"Module {nom} : le crédit photo est obligatoire quand il y a une photo.")
     return modules
@@ -36,5 +48,7 @@ def photo_du_module(modules: dict, nom: str, titre: str) -> dict | None:
         "nom": titre,
         "photo": module["photo_bandeau"],
         "credit_photo": module["credit_photo"],
+        "photo_largeur": module.get("photo_largeur", 0),
+        "photo_hauteur": module.get("photo_hauteur", 0),
         "categorie": "decouverte",
     }

@@ -12,8 +12,10 @@
     "credit_photo": ""
   },
   "decouvrir": {
-    "photo_bandeau": "bandeau-decouvrir.jpg",
-    "credit_photo": "Velvet, CC BY-SA 4.0, via Wikimedia Commons"
+    "photo_bandeau": "bandeau-decouvrir.webp",
+    "credit_photo": "Velvet, CC BY-SA 4.0, via Wikimedia Commons",
+    "photo_largeur": 1000,
+    "photo_hauteur": 892
   },
   "solidarite": {
     "photo_bandeau": "",
