@@ -3,3 +3,5 @@ gunicorn==27.0.1
 azure-identity==1.27.0
 azure-data-tables==12.7.0
 azure-storage-blob==12.31.1
+itsdangerous==2.2.0
+tzdata==2026.6

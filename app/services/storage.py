@@ -7,7 +7,12 @@ La logique métier (profils, étapes) est écrite une seule fois dans la classe 
 Chaque implémentation ne fournit que les opérations élémentaires.
 """
 
+import uuid
 from abc import ABC, abstractmethod
+from datetime import UTC, datetime, timedelta
+from urllib.parse import quote, unquote
+
+from app.services.coffre import DUREE_PARTAGE_HEURES, IDENTIFIANT_VALIDE
 
 TABLE_PROFILS = "profils"
 TABLE_ETAPES = "etapes"
@@ -16,7 +21,7 @@ TABLE_HEURES = "heures"
 TABLES = (TABLE_PROFILS, TABLE_ETAPES, TABLE_ANNONCES, TABLE_HEURES)
 
 CONTENEUR_MEDIAS = "medias-lille"
-# Futur coffre-fort : un dossier par utilisateur (préfixe "<identifiant>/").
+# Coffre-fort : conteneur privé, un préfixe par utilisateur ("<id utilisateur>/<identifiant du fichier>").
 CONTENEUR_COFFRE = "coffre"
 
 PARTITION_PROFIL = "profil"
@@ -50,6 +55,26 @@ class Stockage(ABC):
     @abstractmethod
     def supprimer_coffre(self, id_utilisateur: str) -> int:
         """Supprime les fichiers du coffre-fort d'un utilisateur. Retourne le nombre de fichiers supprimés."""
+
+    @abstractmethod
+    def _ecrire_blob_coffre(self, chemin: str, contenu: bytes, type_contenu: str, metadonnees: dict) -> None:
+        """Écrit un fichier du coffre (sans écraser un fichier existant)."""
+
+    @abstractmethod
+    def _lister_blobs_coffre(self, prefixe: str) -> list[dict]:
+        """Fichiers sous un préfixe : chemin, taille, type, date, métadonnées."""
+
+    @abstractmethod
+    def _lire_blob_coffre(self, chemin: str) -> dict | None:
+        """Contenu, type et métadonnées d'un fichier, ou None."""
+
+    @abstractmethod
+    def _supprimer_blob_coffre(self, chemin: str) -> bool:
+        """Supprime un fichier. Retourne False s'il n'existait pas."""
+
+    def _lien_sas(self, chemin: str, nom: str, debut: datetime, expiration: datetime) -> str | None:
+        """Lien direct en lecture seule (Azure uniquement). None quand il faut un lien interne signé."""
+        return None
 
     @abstractmethod
     def envoyer_media(self, nom: str, contenu: bytes, type_contenu: str) -> None:
@@ -113,6 +138,97 @@ class Stockage(ABC):
     def lister_heures(self, id_utilisateur: str) -> dict[str, float]:
         return {e["RowKey"]: float(e["heures"]) for e in self._lister(TABLE_HEURES, id_utilisateur)}
 
+    # Coffre-fort. Le chemin d'un fichier est toujours "<id utilisateur>/<identifiant>",
+    # avec un identifiant tiré au hasard : l'utilisateur ne choisit jamais le chemin.
+
+    @staticmethod
+    def _chemin(id_utilisateur: str, identifiant: str) -> str:
+        if not id_utilisateur or "/" in id_utilisateur or ".." in id_utilisateur:
+            raise ValueError("Identifiant d'utilisateur invalide.")
+        if not IDENTIFIANT_VALIDE.match(identifiant or ""):
+            raise ValueError("Identifiant de fichier invalide.")
+        return f"{id_utilisateur}/{identifiant}"
+
+    @staticmethod
+    def _fiche(chemin: str, taille: int, type_contenu: str, metadonnees: dict, date: datetime | None) -> dict:
+        depose_le = metadonnees.get("depose_le") or (date.isoformat() if date else "")
+        return {
+            "identifiant": chemin.split("/", 1)[1],
+            "nom": unquote(metadonnees.get("nom_original", "")) or chemin.split("/", 1)[1],
+            "type": type_contenu,
+            "taille": taille,
+            "depose_le": depose_le,
+        }
+
+    def deposer_fichier(self, id_utilisateur: str, nom: str, contenu: bytes, type_contenu: str) -> dict:
+        """Dépose un fichier déjà contrôlé. Le nom d'origine est gardé dans les métadonnées."""
+        extension = "jpg" if type_contenu == "image/jpeg" else type_contenu.rsplit("/", 1)[-1]
+        identifiant = f"{uuid.uuid4().hex}.{extension}"
+        chemin = self._chemin(id_utilisateur, identifiant)
+        metadonnees = {
+            # Les métadonnées Blob n'acceptent que l'ASCII : le nom est encodé.
+            "nom_original": quote(nom, safe=""),
+            "depose_le": datetime.now(UTC).isoformat(timespec="seconds"),
+        }
+        self._ecrire_blob_coffre(chemin, contenu, type_contenu, metadonnees)
+        return self._fiche(chemin, len(contenu), type_contenu, metadonnees, None)
+
+    def lister_fichiers(self, id_utilisateur: str) -> list[dict]:
+        """Fichiers de l'utilisateur, du plus récent au plus ancien."""
+        prefixe = f"{self._chemin(id_utilisateur, '0' * 32 + '.pdf').split('/')[0]}/"
+        fiches = [
+            self._fiche(b["chemin"], b["taille"], b["type"], b["metadonnees"], b["date"])
+            for b in self._lister_blobs_coffre(prefixe)
+            if IDENTIFIANT_VALIDE.match(b["chemin"].split("/", 1)[1])
+        ]
+        return sorted(fiches, key=lambda f: f["depose_le"], reverse=True)
+
+    def lire_fichier(self, id_utilisateur: str, identifiant: str) -> dict | None:
+        """Contenu, type et nom d'origine d'un fichier de l'utilisateur, ou None."""
+        try:
+            chemin = self._chemin(id_utilisateur, identifiant)
+        except ValueError:
+            return None
+        blob = self._lire_blob_coffre(chemin)
+        if blob is None:
+            return None
+        fiche = self._fiche(chemin, len(blob["contenu"]), blob["type"], blob["metadonnees"], None)
+        return {**fiche, "contenu": blob["contenu"]}
+
+    def supprimer_fichier(self, id_utilisateur: str, identifiant: str) -> bool:
+        try:
+            chemin = self._chemin(id_utilisateur, identifiant)
+        except ValueError:
+            return False
+        return self._supprimer_blob_coffre(chemin)
+
+    def generer_lien_partage(
+        self, id_utilisateur: str, identifiant: str, duree_heures: int = DUREE_PARTAGE_HEURES
+    ) -> dict | None:
+        """Lien de lecture seule valable duree_heures, ou None si le fichier n'existe pas.
+
+        Retourne {"mode": "sas", "url": ...} sur Azure (User Delegation SAS),
+        ou {"mode": "interne", "url": None} : l'application crée alors un lien signé vers /partage.
+        """
+        fichier = self.lire_fichier(id_utilisateur, identifiant)
+        if fichier is None:
+            return None
+        maintenant = datetime.now(UTC)
+        expiration = maintenant + timedelta(hours=duree_heures)
+        # Début légèrement dans le passé pour tolérer un décalage d'horloge.
+        url = self._lien_sas(
+            self._chemin(id_utilisateur, identifiant),
+            fichier["nom"],
+            maintenant - timedelta(minutes=5),
+            expiration,
+        )
+        return {
+            "mode": "sas" if url else "interne",
+            "url": url,
+            "expire_le": expiration,
+            "nom": fichier["nom"],
+        }
+
     def supprimer_utilisateur(self, id_utilisateur: str) -> None:
         """Efface le profil, les étapes, les heures et les fichiers du coffre-fort."""
         for table in (TABLE_ETAPES, TABLE_HEURES):
@@ -128,7 +244,8 @@ class StockageMemoire(Stockage):
     def __init__(self):
         self.tables: dict[str, dict[tuple[str, str], dict]] = {}
         self.medias: dict[str, tuple[bytes, str]] = {}
-        self.coffre: dict[str, bytes] = {}
+        # Coffre : chemin -> {"contenu", "type", "metadonnees", "date"}.
+        self.coffre: dict[str, dict] = {}
 
     def initialiser(self) -> None:
         for nom in TABLES:
@@ -155,6 +272,36 @@ class StockageMemoire(Stockage):
             del self.coffre[nom]
         return len(noms)
 
+    def _ecrire_blob_coffre(self, chemin, contenu, type_contenu, metadonnees):
+        if chemin in self.coffre:
+            raise FileExistsError(chemin)
+        self.coffre[chemin] = {
+            "contenu": contenu,
+            "type": type_contenu,
+            "metadonnees": dict(metadonnees),
+            "date": datetime.now(UTC),
+        }
+
+    def _lister_blobs_coffre(self, prefixe):
+        return [
+            {
+                "chemin": chemin,
+                "taille": len(b["contenu"]),
+                "type": b["type"],
+                "metadonnees": b["metadonnees"],
+                "date": b["date"],
+            }
+            for chemin, b in self.coffre.items()
+            if chemin.startswith(prefixe)
+        ]
+
+    def _lire_blob_coffre(self, chemin):
+        blob = self.coffre.get(chemin)
+        return dict(blob) if blob else None
+
+    def _supprimer_blob_coffre(self, chemin):
+        return self.coffre.pop(chemin, None) is not None
+
     def envoyer_media(self, nom, contenu, type_contenu):
         self.medias[nom] = (contenu, type_contenu)
 
@@ -165,9 +312,11 @@ class StockageMemoire(Stockage):
 class StockageAzure(Stockage):
     """Implémentation Azure Table Storage et Blob Storage (ou Azurite)."""
 
-    def __init__(self, service_tables, service_blobs):
+    def __init__(self, service_tables, service_blobs, nom_compte: str | None = None):
         self.service_tables = service_tables
         self.service_blobs = service_blobs
+        # Renseigné seulement avec la Managed Identity : active les liens User Delegation SAS.
+        self.nom_compte = nom_compte
 
     @classmethod
     def depuis_chaine_connexion(cls, chaine: str) -> "StockageAzure":
@@ -191,6 +340,7 @@ class StockageAzure(Stockage):
         return cls(
             TableServiceClient(endpoint=f"https://{nom_compte}.table.core.windows.net", credential=identite),
             BlobServiceClient(account_url=f"https://{nom_compte}.blob.core.windows.net", credential=identite),
+            nom_compte=nom_compte,
         )
 
     def initialiser(self) -> None:
@@ -198,11 +348,13 @@ class StockageAzure(Stockage):
 
         for nom in TABLES:
             self.service_tables.create_table_if_not_exists(nom)
-        try:
-            # Conteneur privé : aucun accès public, les images passent par /medias.
-            self.service_blobs.create_container(CONTENEUR_MEDIAS)
-        except ResourceExistsError:
-            pass
+        # Conteneurs privés (aucun niveau d'accès public) : les images passent par /medias,
+        # les fichiers du coffre par /coffre ou par un lien de partage limité dans le temps.
+        for conteneur in (CONTENEUR_MEDIAS, CONTENEUR_COFFRE):
+            try:
+                self.service_blobs.create_container(conteneur)
+            except ResourceExistsError:
+                pass
 
     def _ecrire(self, table, entite):
         from azure.data.tables import UpdateMode
@@ -232,10 +384,82 @@ class StockageAzure(Stockage):
         try:
             noms = [b.name for b in conteneur.list_blobs(name_starts_with=f"{id_utilisateur}/")]
         except ResourceNotFoundError:
-            return 0  # le coffre-fort n'existe pas encore
+            return 0  # conteneur absent : rien à supprimer
         for nom in noms:
             conteneur.delete_blob(nom)
         return len(noms)
+
+    def _ecrire_blob_coffre(self, chemin, contenu, type_contenu, metadonnees):
+        from azure.storage.blob import ContentSettings
+
+        blob = self.service_blobs.get_blob_client(CONTENEUR_COFFRE, chemin)
+        blob.upload_blob(
+            contenu,
+            overwrite=False,
+            content_settings=ContentSettings(content_type=type_contenu),
+            metadata=metadonnees,
+        )
+
+    def _lister_blobs_coffre(self, prefixe):
+        conteneur = self.service_blobs.get_container_client(CONTENEUR_COFFRE)
+        return [
+            {
+                "chemin": b.name,
+                "taille": b.size,
+                "type": b.content_settings.content_type,
+                "metadonnees": b.metadata or {},
+                "date": b.creation_time or b.last_modified,
+            }
+            for b in conteneur.list_blobs(name_starts_with=prefixe, include=["metadata"])
+        ]
+
+    def _lire_blob_coffre(self, chemin):
+        from azure.core.exceptions import ResourceNotFoundError
+
+        blob = self.service_blobs.get_blob_client(CONTENEUR_COFFRE, chemin)
+        try:
+            telechargement = blob.download_blob()
+        except ResourceNotFoundError:
+            return None
+        proprietes = telechargement.properties
+        return {
+            "contenu": telechargement.readall(),
+            "type": proprietes.content_settings.content_type,
+            "metadonnees": proprietes.metadata or {},
+        }
+
+    def _supprimer_blob_coffre(self, chemin):
+        from azure.core.exceptions import ResourceNotFoundError
+
+        try:
+            self.service_blobs.get_blob_client(CONTENEUR_COFFRE, chemin).delete_blob()
+        except ResourceNotFoundError:
+            return False
+        return True
+
+    def _lien_sas(self, chemin, nom, debut, expiration):
+        """User Delegation SAS en lecture seule : clé de délégation obtenue avec la Managed Identity.
+
+        Aucune clé de compte n'est utilisée. Rôles nécessaires : Storage Blob Data Contributor
+        et Storage Blob Delegator. Avec Azurite (pas de délégation AAD), retourne None.
+        """
+        if not self.nom_compte:
+            return None
+        from azure.storage.blob import BlobSasPermissions, generate_blob_sas
+
+        cle = self.service_blobs.get_user_delegation_key(key_start_time=debut, key_expiry_time=expiration)
+        sas = generate_blob_sas(
+            account_name=self.nom_compte,
+            container_name=CONTENEUR_COFFRE,
+            blob_name=chemin,
+            user_delegation_key=cle,
+            permission=BlobSasPermissions(read=True),
+            start=debut,
+            expiry=expiration,
+            protocol="https",
+            content_disposition=f"inline; filename*=UTF-8''{quote(nom, safe='')}",
+        )
+        return f"{self.service_blobs.get_blob_client(CONTENEUR_COFFRE, chemin).url}?{sas}"
 
     def envoyer_media(self, nom, contenu, type_contenu):
         from azure.storage.blob import ContentSettings
