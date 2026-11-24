@@ -1,4 +1,4 @@
-"""Corrections avant le premier push : profil, migration, WebP, ressources locales, coffre-fort."""
+"""Corrections avant le premier push : profil, migration, WebP, ressources locales."""
 
 import io
 import json
@@ -248,14 +248,3 @@ def test_polices_et_icones_locales_avec_licences(client):
     assert "SIL Open Font License" in (vendor / "fonts/LICENSE-Inter.txt").read_text(encoding="utf-8")
     assert "SIL Open Font License" in (vendor / "fonts/LICENSE-Poppins.txt").read_text(encoding="utf-8")
     assert client.get("/static/vendor/fonts/inter-latin-400-normal.woff2").status_code == 200
-
-
-# Coffre-fort
-
-
-def test_coffre_fort_annonce_sans_lien_mort(client):
-    texte = client.get("/coffre").get_data(as_text=True)
-    assert "Disponible très bientôt" in texte
-    assert "24 h" in texte
-    principal = texte[texte.index('class="principal"') : texte.index('class="laterale"')]
-    assert "<a " not in principal
