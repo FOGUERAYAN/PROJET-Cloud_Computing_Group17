@@ -5,8 +5,9 @@ from datetime import UTC, date, datetime
 
 from flask import Blueprint, current_app, flash, redirect, render_template, request, session, url_for
 
-from app.routes.commun import majuscule_initiale, profil_courant
+from app.routes.commun import profil_courant
 from app.services.planning import calculer_etapes
+from app.services.referentiels import COMMUNE_DEFAUT, LANGUE_AUTRE
 from app.services.suivi import liste_badges, recalculer, resume_recalcul
 
 bp = Blueprint("profil", __name__)
@@ -27,16 +28,23 @@ def valider(formulaire) -> tuple[dict, list[str]]:
     erreurs = []
     pseudo = formulaire.get("pseudo", "").strip()[:40]
     statut = formulaire.get("statut", "")
-    ville = majuscule_initiale(formulaire.get("ville", ""))[:80]
-    langue = majuscule_initiale(formulaire.get("langue", ""))[:40]
+    ville = formulaire.get("ville", "")
+    langue = formulaire.get("langue", "")
+    precision = " ".join(formulaire.get("langue_precision", "").split())[:40]
     interets = [i for i in formulaire.getlist("interets") if i in INTERETS]
+    codes_langues = {x["code"] for x in current_app.extensions["langues"]}
+    codes_communes = {x["code"] for x in current_app.extensions["communes"]}
 
     if statut not in STATUTS:
         erreurs.append("Choisis un statut.")
-    if not ville:
-        erreurs.append("Indique ta ville.")
-    if not langue:
-        erreurs.append("Indique ta langue maternelle.")
+    if ville not in codes_communes:
+        erreurs.append("Choisis ta commune dans la liste.")
+    if langue not in codes_langues:
+        erreurs.append("Choisis ta langue maternelle dans la liste.")
+    elif langue == LANGUE_AUTRE and not precision:
+        erreurs.append("Précise ta langue maternelle.")
+    if langue != LANGUE_AUTRE:
+        precision = ""
     try:
         date_arrivee = date.fromisoformat(formulaire.get("date_arrivee", ""))
     except ValueError:
@@ -49,6 +57,7 @@ def valider(formulaire) -> tuple[dict, list[str]]:
         "ville": ville,
         "date_arrivee": date_arrivee.isoformat() if date_arrivee else "",
         "langue": langue,
+        "langue_precision": precision,
         "interets": ",".join(interets),
     }
     return profil, erreurs
@@ -64,6 +73,9 @@ def formulaire_profil(valeurs, erreurs, action, titre, code=200):
             "profil_formulaire.html",
             statuts=STATUTS,
             interets=INTERETS,
+            langues=current_app.extensions["langues"],
+            communes=current_app.extensions["communes"],
+            commune_defaut=COMMUNE_DEFAUT,
             valeurs=valeurs,
             erreurs=erreurs,
             action=action,

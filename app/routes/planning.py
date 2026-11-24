@@ -4,9 +4,9 @@ from datetime import date
 
 from flask import Blueprint, abort, current_app, flash, redirect, render_template, session, url_for
 
-from app.routes.commun import majuscule_initiale
 from app.services.lieux import trouver
 from app.services.planning import DUREE_PARCOURS, est_urgente, jour_courant, jours_restants
+from app.services.referentiels import nom_commune
 from app.services.suivi import (
     basculer_piece,
     groupe_de,
@@ -76,7 +76,7 @@ def index():
     return render_template(
         "planning.html",
         profil=profil,
-        ville=majuscule_initiale(profil["ville"]),
+        ville=nom_commune(current_app.extensions["communes"], profil["ville"]),
         jour=jour_courant(date.fromisoformat(profil["date_arrivee"]), jour),
         duree=DUREE_PARCOURS,
         prochaine=vue_etape(prochaine, details, lieux, jour) if prochaine else None,

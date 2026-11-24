@@ -26,14 +26,30 @@
       {% endfor %}
     </fieldset>
 
-    <label for="ville">2. Dans quelle ville habites-tu ?</label>
-    <input id="ville" name="ville" maxlength="80" required value="{{ valeurs.ville or '' }}">
+    <label for="ville">2. Dans quelle commune de la métropole habites-tu ?</label>
+    <select id="ville" name="ville" required>
+      {% set ville_choisie = valeurs.ville or commune_defaut %}
+      {% for commune in communes %}
+      <option value="{{ commune.code }}" {% if commune.code == ville_choisie %}selected{% endif %}>{{ commune.nom }}</option>
+      {% endfor %}
+    </select>
 
     <label for="date_arrivee">3. Quelle est ta date d'arrivée en France ?</label>
     <input id="date_arrivee" name="date_arrivee" type="date" required value="{{ valeurs.date_arrivee or '' }}">
 
-    <label for="langue">4. Quelle est ta langue maternelle ?</label>
-    <input id="langue" name="langue" maxlength="40" required value="{{ valeurs.langue or '' }}">
+    <div class="champ-langue">
+      <label for="langue">4. Quelle est ta langue maternelle ?</label>
+      <select id="langue" name="langue" required>
+        <option value="" disabled {% if not valeurs.langue %}selected{% endif %}>Choisis ta langue</option>
+        {% for langue in langues %}
+        <option value="{{ langue.code }}" {% if langue.code == valeurs.langue %}selected{% endif %}>{{ langue.libelle }}{% if langue.nom_local %} ({{ langue.nom_local }}){% endif %}</option>
+        {% endfor %}
+      </select>
+      <div class="langue-precision">
+        <label for="langue_precision">Précise ta langue</label>
+        <input id="langue_precision" name="langue_precision" maxlength="40" value="{{ valeurs.langue_precision or '' }}">
+      </div>
+    </div>
 
     <fieldset>
       <legend>5. Quels sont tes centres d'intérêt ?</legend>

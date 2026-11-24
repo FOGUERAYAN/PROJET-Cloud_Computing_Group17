@@ -4,9 +4,10 @@ from datetime import date
 
 from flask import current_app, g, session
 
-from app.services.entraide import grouper_par_jour, nom_du_jour
+from app.services.entraide import prochains_creneaux
 from app.services.liens import filtrer_par_themes
 from app.services.planning import jour_courant, jours_restants
+from app.services.referentiels import nom_commune, nom_langue
 from app.services.sigles import famille_du_theme
 from app.services.suivi import prochaine_etape, progression
 from app.services.themes import THEMES
@@ -83,10 +84,8 @@ def resume_progression() -> dict | None:
 
 
 def semaine_a_lille(limite: int = 3) -> list:
-    """Quelques rendez-vous d'entraide : ceux d'aujourd'hui d'abord, puis les jours à confirmer."""
-    semaine, sans_jour = grouper_par_jour(current_app.extensions["entraide"])
-    jour = nom_du_jour(aujourd_hui())
-    return (semaine[jour] + sans_jour)[:limite]
+    """Prochains rendez-vous d'entraide dont le jour est connu (liste vide sinon)."""
+    return prochains_creneaux(current_app.extensions["entraide"], aujourd_hui(), limite)
 
 
 def donnees_laterales(themes=()) -> dict:
@@ -104,6 +103,10 @@ def installer(app) -> None:
         donnees_laterales=donnees_laterales,
         libelles_themes=THEMES,
         famille_du_theme=famille_du_theme,
+        libelle_commune=lambda code: nom_commune(current_app.extensions["communes"], code),
+        libelle_langue=lambda code, precision="": nom_langue(
+            current_app.extensions["langues"], code, precision
+        ),
     )
     app.jinja_env.filters["majuscule_initiale"] = majuscule_initiale
 

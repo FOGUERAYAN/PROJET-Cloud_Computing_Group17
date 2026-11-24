@@ -19,7 +19,7 @@
   {% if rien %}<p>Ton planning ne change pas.</p>{% endif %}
 
   <form method="post" action="{{ url_for('profil.confirmer') }}" class="actions">
-    {% for champ in ("pseudo", "statut", "ville", "date_arrivee", "langue") %}
+    {% for champ in ("pseudo", "statut", "ville", "date_arrivee", "langue", "langue_precision") %}
     <input type="hidden" name="{{ champ }}" value="{{ nouveau[champ] }}">
     {% endfor %}
     {% for interet in interets %}<input type="hidden" name="interets" value="{{ interet }}">{% endfor %}

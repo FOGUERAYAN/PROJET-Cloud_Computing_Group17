@@ -68,6 +68,9 @@ class Stockage(ABC):
     def lire_profil(self, id_utilisateur: str) -> dict | None:
         return self._lire(TABLE_PROFILS, PARTITION_PROFIL, id_utilisateur)
 
+    def lister_profils(self) -> list[dict]:
+        return self._lister(TABLE_PROFILS, PARTITION_PROFIL)
+
     def enregistrer_etapes(self, id_utilisateur: str, etapes: list[dict]) -> None:
         for etape in etapes:
             entite = {

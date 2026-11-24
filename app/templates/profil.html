@@ -13,9 +13,9 @@
   <dl class="reponses">
     {% if profil.pseudo %}<div><dt>Pseudo</dt><dd>{{ profil.pseudo }}</dd></div>{% endif %}
     <div><dt>Statut</dt><dd>{{ statut }}</dd></div>
-    <div><dt>Ville</dt><dd>{{ profil.ville | majuscule_initiale }}</dd></div>
+    <div><dt>Ville</dt><dd>{{ libelle_commune(profil.ville) }}</dd></div>
     <div><dt>Date d'arrivée</dt><dd>{{ date_arrivee }}</dd></div>
-    <div><dt>Langue maternelle</dt><dd>{{ profil.langue | majuscule_initiale }}</dd></div>
+    <div><dt>Langue maternelle</dt><dd>{{ libelle_langue(profil.langue, profil.langue_precision or '') }}</dd></div>
     <div><dt>Centres d'intérêt</dt><dd>{{ interets | join(", ") if interets else "Aucun" }}</dd></div>
   </dl>
 </section>
