@@ -213,6 +213,8 @@ Les données sont perdues à l'arrêt.
 | `PHOTOS_CONTACT` | Pour le script de photos | Contact de l'équipe envoyé à Wikimedia Commons. Jamais versionné. |
 | `AZURE_STORAGE_ACCOUNT_NAME` | En mode `azure` | Nom du compte de stockage. L'authentification passe par `DefaultAzureCredential`. |
 
+Prévues par le contrat d'interface avec l'infrastructure, pas encore lues par le code : `KEY_VAULT_URL` (URL du Key Vault) et `APPLICATIONINSIGHTS_CONNECTION_STRING` (télémétrie Application Insights).
+
 Aucun secret n'est écrit dans le code. Le fichier `.env` est ignoré par git et par Docker.
 
 ## Modèle de données (Azure Table Storage)
@@ -225,3 +227,15 @@ Aucun secret n'est écrit dans le code. Le fichier `.env` est ignoré par git et
 | `heures` | identifiant utilisateur | mois (AAAA-MM) | heures |
 
 La table `annonces` est créée, mais ses pages ne sont pas encore développées.
+
+## CI
+
+Le workflow [`ci.yml`](.github/workflows/ci.yml) s'exécute sur chaque Pull Request vers `main` et sur chaque push sur `main` :
+
+| Job | Vérifications |
+| --- | --- |
+| `lint-test` | `ruff check`, `ruff format --check`, `pytest` |
+| `docker-build` | construction de l'image Docker |
+| `gitleaks` | recherche de secrets dans tout l'historique Git |
+
+La publication de l'image dans Azure Container Registry sera ajoutée si l'authentification GitHub Actions → Azure (OIDC) est autorisée sur Azure for Students.
