@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block titre %}Lien indisponible | Cap90{% endblock %}
+{% block contenu %}
+<section class="carte attente">
+  <i class="ti ti-link-off icone-grande" aria-hidden="true"></i>
+  {% if expire %}
+  <h1>Ce lien a expiré</h1>
+  <p>Les liens de partage du coffre-fort ne sont valables que 24 h.</p>
+  <p class="discret">Demande à la personne qui te l'a envoyé de créer un nouveau lien.</p>
+  {% else %}
+  <h1>Ce lien n'est pas valide</h1>
+  <p>Le lien est incomplet, a été modifié, ou le fichier a été supprimé.</p>
+  {% endif %}
+</section>
+{% endblock %}

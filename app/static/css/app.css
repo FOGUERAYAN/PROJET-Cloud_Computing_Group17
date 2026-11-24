@@ -1393,3 +1393,126 @@ legend {
     gap: 6px;
   }
 }
+
+/* Coffre-fort */
+.avertissement-demo {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 0 var(--espace);
+  padding: 12px 16px;
+  border-radius: var(--rayon);
+  background: var(--couleur-alerte);
+  color: var(--couleur-texte);
+  font-weight: 500;
+}
+
+.avertissement-demo .ti {
+  font-size: 20px;
+}
+
+.erreurs p {
+  margin: 0;
+}
+
+.formulaire-depot {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formulaire-depot label {
+  font-weight: 500;
+}
+
+.formulaire-depot input[type="file"] {
+  padding: 10px;
+  border: 1px dashed var(--couleur-bordure);
+  border-radius: 8px;
+  background: var(--couleur-fond);
+  font: inherit;
+}
+
+.formulaire-depot .bouton {
+  align-self: flex-start;
+}
+
+.carte-lien {
+  border: 2px solid var(--couleur-primaire);
+}
+
+.lien-a-copier {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.lien-a-copier input {
+  flex: 1 1 240px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--couleur-bordure);
+  border-radius: 8px;
+  background: var(--couleur-fond);
+  color: var(--couleur-texte);
+  font: inherit;
+  font-size: 0.85rem;
+}
+
+.lien-a-copier .bouton {
+  margin-top: 0;
+}
+
+.rappel-partage {
+  padding: 10px 12px;
+  border-left: 4px solid var(--couleur-alerte);
+  background: var(--couleur-fond);
+}
+
+.liste-fichiers {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fichier {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--couleur-bordure);
+}
+
+.fichier:last-child {
+  border-bottom: 0;
+}
+
+.fichier-infos {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.fichier-icone {
+  font-size: 32px;
+  color: var(--couleur-primaire);
+}
+
+.fichier-nom {
+  margin: 0;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.fichier-actions .bouton {
+  margin-top: 0;
+}
+
+.bouton-supprimer {
+  border-color: var(--couleur-retard);
+  color: var(--couleur-retard);
+}

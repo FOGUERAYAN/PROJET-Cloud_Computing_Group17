@@ -1,19 +1,73 @@
 {% extends "base.html" %}
 {% from "_macros.html" import bandeau, mise_en_page %}
 {% block titre %}Coffre-fort | Cap90{% endblock %}
-{% block bandeau %}{{ bandeau("Coffre-fort", "Un espace pour ranger tes justificatifs.", ["papiers"]) }}{% endblock %}
+{% block bandeau %}{{ bandeau("Coffre-fort", "Range tes justificatifs et partage-les pendant 24 h.", ["papiers"]) }}{% endblock %}
 {% block contenu %}
 {% call mise_en_page(["papiers"]) %}
-<section class="carte attente carte-bientot" aria-labelledby="titre-coffre">
-  <i class="ti ti-lock icone-grande" aria-hidden="true"></i>
-  <p class="badge badge-alerte">Disponible très bientôt</p>
-  <h2 id="titre-coffre">Ton coffre-fort de justificatifs</h2>
-  <p>Tu pourras déposer tes justificatifs en sécurité, puis les partager avec un lien valable 24 h.</p>
-  <ul class="liste-avantages">
-    <li><i class="ti ti-shield-lock" aria-hidden="true"></i> Dépôt sécurisé : passeport, bail, attestations.</li>
-    <li><i class="ti ti-clock-share" aria-hidden="true"></i> Partage par un lien qui expire au bout de 24 h.</li>
-    <li><i class="ti ti-trash" aria-hidden="true"></i> Suppression à tout moment depuis ton profil.</li>
+<p class="avertissement-demo" role="note">
+  <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+  <span>Pour la démonstration, n'utilise que de faux documents, jamais tes vrais papiers.</span>
+</p>
+
+{% if erreur %}
+<div class="erreurs" role="alert">
+  <i class="ti ti-alert-circle" aria-hidden="true"></i>
+  <p>{{ erreur }}</p>
+</div>
+{% endif %}
+
+{% if lien %}
+<section class="carte carte-lien" id="lien-partage" aria-labelledby="titre-lien">
+  <h2 id="titre-lien"><i class="ti ti-share" aria-hidden="true"></i> Lien de partage pour {{ lien.nom }}</h2>
+  <label for="champ-lien" class="visuellement-cache">Lien de partage</label>
+  <div class="lien-a-copier">
+    <input id="champ-lien" type="text" value="{{ lien.url }}" readonly>
+    <button class="bouton" type="button" data-copier="champ-lien"><i class="ti ti-copy" aria-hidden="true"></i> Copier le lien</button>
+  </div>
+  <p class="discret" role="status" data-statut-copie></p>
+  <p><i class="ti ti-clock" aria-hidden="true"></i> Valable jusqu'au {{ lien.expire }} (heure de Paris).</p>
+  <p class="rappel-partage"><i class="ti ti-eye" aria-hidden="true"></i> Toute personne qui a ce lien pourra voir le fichier pendant 24 h. Pour l'arrêter plus tôt, supprime le fichier.</p>
+</section>
+{% endif %}
+
+<section class="carte" aria-labelledby="titre-depot">
+  <h2 id="titre-depot"><i class="ti ti-upload" aria-hidden="true"></i> Déposer un fichier</h2>
+  <form method="post" action="{{ url_for('coffre.deposer') }}" enctype="multipart/form-data" class="formulaire-depot">
+    <label for="fichier">Fichier PDF, JPG ou PNG, {{ taille_max }} au maximum</label>
+    <input id="fichier" name="fichier" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" required>
+    <button class="bouton" type="submit"><i class="ti ti-lock" aria-hidden="true"></i> Déposer dans mon coffre</button>
+  </form>
+</section>
+
+<section class="carte" aria-labelledby="titre-fichiers">
+  <h2 id="titre-fichiers">Mes fichiers</h2>
+  {% if fichiers %}
+  <ul class="liste-fichiers">
+    {% for f in fichiers %}
+    <li class="fichier">
+      <div class="fichier-infos">
+        <i class="ti ti-{{ 'file-type-pdf' if f.type == 'application/pdf' else 'photo' }} fichier-icone" aria-hidden="true"></i>
+        <div>
+          <p class="fichier-nom">{{ f.nom }}</p>
+          <p class="discret">{{ f.type_lisible }}, {{ f.taille_lisible }}{% if f.depose_lisible %}, déposé le {{ f.depose_lisible }}{% endif %}</p>
+        </div>
+      </div>
+      <div class="actions fichier-actions">
+        <a class="bouton bouton-secondaire" href="{{ url_for('coffre.telecharger', identifiant=f.identifiant) }}"><i class="ti ti-download" aria-hidden="true"></i> Télécharger</a>
+        <form method="post" action="{{ url_for('coffre.partager', identifiant=f.identifiant) }}">
+          <button class="bouton bouton-secondaire" type="submit"><i class="ti ti-link" aria-hidden="true"></i> Partager 24 h</button>
+        </form>
+        <form method="post" action="{{ url_for('coffre.supprimer', identifiant=f.identifiant) }}">
+          <button class="bouton bouton-secondaire bouton-supprimer" type="submit" aria-label="Supprimer {{ f.nom }}"><i class="ti ti-trash" aria-hidden="true"></i> Supprimer</button>
+        </form>
+      </div>
+    </li>
+    {% endfor %}
   </ul>
+  {% else %}
+  <p class="discret">Ton coffre est vide. Dépose un premier justificatif ci-dessus.</p>
+  {% endif %}
 </section>
 {% endcall %}
+<script src="{{ url_for('static', filename='js/coffre.js') }}" defer></script>
 {% endblock %}
