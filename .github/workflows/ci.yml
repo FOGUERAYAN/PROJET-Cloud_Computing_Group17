@@ -70,7 +70,7 @@ jobs:
           docker run -d --name cap90 -p 8000:8000 \
             -e SECRET_KEY=ci-secret-sans-valeur -e STORAGE_MODE=memoire \
             cap90:${{ github.sha }}
-          for i in $(seq 1 20); do
+          for _ in $(seq 1 20); do
             if curl -fsS http://127.0.0.1:8000/health; then
               echo
               exit 0
