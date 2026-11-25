@@ -1,0 +1,81 @@
+name: Publication de l'image
+
+# Publie l'image Docker dans l'Azure Container Registry une fois la CI verte sur main.
+# Authentification Azure par OIDC : aucun mot de passe ni secret de registre.
+#
+# À renseigner dans GitHub (Settings > Secrets and variables > Actions) :
+#   - variable  ACR_NAME            : nom de l'ACR, sans .azurecr.io (fourni par Maroua)
+#   - secrets   AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID : application Entra ID fédérée
+# Tant que ACR_NAME est vide, le workflow s'ignore avec une notice.
+
+on:
+  workflow_run:
+    workflows: ["CI Application"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  # Commit publié : celui que la CI vient de valider, ou celui du lancement manuel.
+  IMAGE_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+  IMAGE_NAME: cap90
+
+jobs:
+  publish:
+    name: publish
+    runs-on: ubuntu-latest
+    # Un déclenchement par la CI ne publie que si la CI est verte.
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    steps:
+      - name: Vérification de la configuration
+        id: config
+        env:
+          ACR_NAME: ${{ vars.ACR_NAME }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        run: |
+          if [ -z "$ACR_NAME" ]; then
+            echo "::notice::vars.ACR_NAME n'est pas défini (l'ACR n'existe pas encore) : publication ignorée."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          elif [ -z "$AZURE_CLIENT_ID" ] || [ -z "$AZURE_TENANT_ID" ] || [ -z "$AZURE_SUBSCRIPTION_ID" ]; then
+            echo "::notice::Secrets AZURE_CLIENT_ID, AZURE_TENANT_ID ou AZURE_SUBSCRIPTION_ID absents (OIDC non configuré) : publication ignorée."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Récupération du code
+        if: steps.config.outputs.enabled == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.IMAGE_SHA }}
+
+      - name: Connexion à Azure (OIDC)
+        if: steps.config.outputs.enabled == 'true'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Connexion à l'ACR
+        if: steps.config.outputs.enabled == 'true'
+        run: az acr login --name "${{ vars.ACR_NAME }}"
+
+      # Un tag par commit (SHA complet). Pas de tag latest.
+      - name: Construction et publication de l'image
+        if: steps.config.outputs.enabled == 'true'
+        run: |
+          image="${{ vars.ACR_NAME }}.azurecr.io/${IMAGE_NAME}:${IMAGE_SHA}"
+          docker build --tag "$image" .
+          docker push "$image"
+          echo "Image publiée : $image" >> "$GITHUB_STEP_SUMMARY"
