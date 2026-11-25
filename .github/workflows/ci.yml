@@ -27,13 +27,16 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
 
+      # requirements-dev.txt inclut requirements.txt et fixe les versions de ruff, pytest et pillow.
       - name: Installation des dépendances
         run: |
           python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
-          pip install ruff pytest
+          pip install -r requirements-dev.txt
 
       - name: Lint (ruff check)
         run: ruff check .
@@ -41,17 +44,9 @@ jobs:
       - name: Formatage (ruff format)
         run: ruff format --check .
 
+      # Aucun test collecté (code 5) fait échouer le job : la suite doit toujours s'exécuter.
       - name: Tests (pytest)
-        run: |
-          set +e
-          pytest -q
-          code=$?
-          set -e
-          if [ "$code" -eq 5 ]; then
-            echo "::warning::Aucun test trouvé pour l'instant."
-            exit 0
-          fi
-          exit "$code"
+        run: pytest -q
 
   docker-build:
     name: docker-build
@@ -62,12 +57,28 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Construction de l'image Docker
-        if: hashFiles('Dockerfile') != ''
         run: docker build --tag cap90:${{ github.sha }} .
 
-      - name: Pas encore de Dockerfile
-        if: hashFiles('Dockerfile') == ''
-        run: echo "::notice::Aucun Dockerfile pour l'instant, build ignoré."
+      - name: Vérification de l'utilisateur non root
+        run: |
+          user=$(docker inspect --format '{{.Config.User}}' cap90:${{ github.sha }})
+          echo "Utilisateur de l'image : ${user:-root}"
+          test -n "$user" && test "$user" != "root" && test "$user" != "0"
+
+      - name: Test de démarrage (GET /health)
+        run: |
+          docker run -d --name cap90 -p 8000:8000 \
+            -e SECRET_KEY=ci-secret-sans-valeur -e STORAGE_MODE=memoire \
+            cap90:${{ github.sha }}
+          for i in $(seq 1 20); do
+            if curl -fsS http://127.0.0.1:8000/health; then
+              echo
+              exit 0
+            fi
+            sleep 1
+          done
+          docker logs cap90
+          exit 1
 
   gitleaks:
     name: gitleaks
