@@ -256,7 +256,7 @@ def test_accueil_sans_et_avec_profil(client):
 
     client.post("/profil", data=FORMULAIRE)
     texte = client.get("/").get_data(as_text=True)
-    assert "Voir mon planning" in texte
+    assert "Voir mes démarches" in texte
     assert ">AD<" in texte.replace("\n", "").replace(" ", "")
     assert "Ta prochaine étape" in texte
     assert "Cette semaine à Lille" in texte
