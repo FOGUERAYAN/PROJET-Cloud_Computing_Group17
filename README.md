@@ -270,12 +270,13 @@ Les données sont perdues à l'arrêt.
 | `STORAGE_MODE` | Non | `memoire` (défaut), `azurite` (local) ou `azure` (Managed Identity). |
 | `AZURE_STORAGE_CONNECTION_STRING` | En mode `azurite` | Toujours `UseDevelopmentStorage=true`, fournie directement par `docker-compose.yml`. Hors contrat, absente de `.env.example`. |
 | `PHOTOS_CONTACT` | Pour le script de photos | Contact de l'équipe envoyé à Wikimedia Commons. Jamais versionné. |
-| `AZURE_STORAGE_ACCOUNT_NAME` | En mode `azure` | Nom du compte de stockage. L'authentification passe par `DefaultAzureCredential`. |
+| `AZURE_STORAGE_ACCOUNT_NAME` | En mode `azure` | Nom du compte de stockage (`stcap90prodfrc`). L'authentification passe par `DefaultAzureCredential`. |
+| `AZURE_CLIENT_ID` | Si identité user-assigned | Client ID de l'identité managée, lu par `DefaultAzureCredential`. Inutile avec une identité system-assigned. |
 
 Prévues par le [contrat d'interface avec l'infrastructure](https://github.com/FOGUERAYAN/PROJET_Cloud_Computing_Group17_Infrastructure), pas encore lues par le code : `KEY_VAULT_URL` (URL du Key Vault) et `APPLICATIONINSIGHTS_CONNECTION_STRING` (télémétrie Application Insights).
 
 `.env.example` contient exactement les variables du contrat : `STORAGE_MODE`, `AZURE_STORAGE_ACCOUNT_NAME`,
-`SECRET_KEY`, `KEY_VAULT_URL`, `APPLICATIONINSIGHTS_CONNECTION_STRING` et `PHOTOS_CONTACT`.
+`SECRET_KEY`, `KEY_VAULT_URL`, `APPLICATIONINSIGHTS_CONNECTION_STRING`, `AZURE_CLIENT_ID` (facultative) et `PHOTOS_CONTACT`.
 Le port de l'application est fixé à 8000 dans le `Dockerfile`.
 
 Aucun secret n'est écrit dans le code. Le fichier `.env` est ignoré par git et par Docker.
