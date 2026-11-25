@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% from "_macros.html" import bandeau, mise_en_page, anneau, barre_pieces, bouton_officiel %}
-{% block titre %}Mon planning | Cap90{% endblock %}
+{% block titre %}Mes démarches | Cap90{% endblock %}
 
 {% block bandeau %}
-{% call bandeau("Mon planning", (profil.pseudo ~ ", " if profil.pseudo else "") ~ ville ~ ".", ["papiers", "sante", "banque", "logement"]) %}
+{% call bandeau("Mes démarches", (profil.pseudo ~ ", " if profil.pseudo else "") ~ ville ~ ".", ["papiers", "sante", "banque", "logement"]) %}
   <div class="bandeau-progression">
     {{ anneau(pourcentage, faites ~ "/" ~ total, faites ~ " démarches faites sur " ~ total, "anneau-clair") }}
     <p><strong>Jour {{ jour }} sur {{ duree }}</strong><br><span>{{ faites }} sur {{ total }} démarches faites</span></p>

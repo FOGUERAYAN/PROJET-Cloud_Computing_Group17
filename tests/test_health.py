@@ -5,10 +5,10 @@ def test_health_repond_200(client):
 
 
 def test_pages_publiques_repondent(client):
-    for chemin in ("/", "/profil", "/coffre", "/solidarite"):
+    for chemin in ("/", "/profil", "/solidarite"):
         assert client.get(chemin).status_code == 200
 
 
 def test_pages_attente_affichent_le_message(client):
-    assert "Disponible très bientôt" in client.get("/coffre").get_data(as_text=True)
+    assert client.get("/coffre").headers["Location"].endswith("/profil")  # coffre réservé aux profils
     assert "Disponible prochainement." in client.get("/solidarite").get_data(as_text=True)

@@ -141,7 +141,7 @@ def modifier():
 
 @bp.post("/profil/modifier")
 def verifier():
-    """Affiche l'effet des nouvelles réponses sur le planning avant de les enregistrer."""
+    """Affiche l'effet des nouvelles réponses sur les démarches avant de les enregistrer."""
     if profil_courant() is None:
         return redirect(url_for("profil.formulaire"))
     nouveau, erreurs = valider(request.form)
@@ -187,7 +187,7 @@ def confirmer():
     for code in a_supprimer:
         stockage().supprimer_etape(id_utilisateur, code)
 
-    flash("Ton profil est à jour et ton planning a été recalculé.", "succes")
+    flash("Ton profil est à jour et tes démarches ont été recalculées.", "succes")
     return redirect(url_for("planning.index"))
 
 

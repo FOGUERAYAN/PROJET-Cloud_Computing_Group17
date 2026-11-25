@@ -1393,3 +1393,252 @@ legend {
     gap: 6px;
   }
 }
+
+/* Coffre-fort */
+.avertissement-demo {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 0 var(--espace);
+  padding: 12px 16px;
+  border-radius: var(--rayon);
+  background: var(--couleur-alerte);
+  color: var(--couleur-texte);
+  font-weight: 500;
+}
+
+.avertissement-demo .ti {
+  font-size: 20px;
+}
+
+.erreurs p {
+  margin: 0;
+}
+
+.formulaire-depot {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formulaire-depot label {
+  font-weight: 500;
+}
+
+.formulaire-depot input[type="file"] {
+  padding: 10px;
+  border: 1px dashed var(--couleur-bordure);
+  border-radius: 8px;
+  background: var(--couleur-fond);
+  font: inherit;
+}
+
+.formulaire-depot .bouton {
+  align-self: flex-start;
+}
+
+.carte-lien {
+  border: 2px solid var(--couleur-primaire);
+}
+
+.lien-a-copier {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.lien-a-copier input {
+  flex: 1 1 240px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--couleur-bordure);
+  border-radius: 8px;
+  background: var(--couleur-fond);
+  color: var(--couleur-texte);
+  font: inherit;
+  font-size: 0.85rem;
+}
+
+.lien-a-copier .bouton {
+  margin-top: 0;
+}
+
+.rappel-partage {
+  padding: 10px 12px;
+  border-left: 4px solid var(--couleur-alerte);
+  background: var(--couleur-fond);
+}
+
+.liste-fichiers {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fichier {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--couleur-bordure);
+}
+
+.fichier:last-child {
+  border-bottom: 0;
+}
+
+.fichier-infos {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.fichier-icone {
+  font-size: 32px;
+  color: var(--couleur-primaire);
+}
+
+.fichier-nom {
+  margin: 0;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.fichier-actions .bouton {
+  margin-top: 0;
+}
+
+.bouton-supprimer {
+  border-color: var(--couleur-retard);
+  color: var(--couleur-retard);
+}
+
+/* En-tête : cloche des notifications et pastille du profil */
+.actions-entete {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cloche {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--couleur-bordure);
+  border-radius: 50%;
+  color: var(--couleur-texte);
+  text-decoration: none;
+}
+
+.cloche .ti {
+  font-size: 22px;
+}
+
+.cloche[aria-current="page"] {
+  border-color: var(--couleur-primaire);
+  color: var(--couleur-primaire);
+}
+
+.compteur {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border: 2px solid var(--couleur-surface);
+  border-radius: 999px;
+  background: var(--couleur-retard);
+  color: var(--couleur-surface);
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 16px;
+  text-align: center;
+}
+
+@media (max-width: 720px) {
+  .actions-entete {
+    margin-left: auto;
+  }
+
+  .actions-entete .pastille-profil {
+    margin-left: 0;
+  }
+}
+
+/* Page Notifications */
+.liste-notifications {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.notification {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+  border: 1px solid var(--couleur-bordure);
+  border-left: 5px solid var(--couleur-primaire);
+  border-radius: 8px;
+}
+
+.notification a {
+  color: var(--couleur-texte);
+  font-weight: 500;
+}
+
+.notification-icone {
+  font-size: 22px;
+  color: var(--couleur-primaire);
+}
+
+.notification-alerte {
+  border-left-color: var(--couleur-alerte);
+}
+
+.notification-alerte .notification-icone {
+  color: var(--couleur-alerte-texte);
+}
+
+.notification-retard {
+  border-left-color: var(--couleur-retard);
+}
+
+.notification-retard .notification-icone {
+  color: var(--couleur-retard);
+}
+
+.a-jour {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--police-titre);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.a-jour .ti {
+  font-size: 32px;
+  color: var(--couleur-primaire);
+}
+
+.a-jour p {
+  margin: 0;
+}
+
+/* Barre du bas : libellé "Mes démarches" sur deux lignes, centré */
+@media (max-width: 720px) {
+  .barre-onglets span {
+    text-align: center;
+    line-height: 1.15;
+  }
+}

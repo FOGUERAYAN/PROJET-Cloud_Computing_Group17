@@ -7,6 +7,10 @@ Un coffre-fort de justificatifs et un espace de dons entre habitants arriveront 
 Projet de Cloud Computing, JUNIA ISEN. L'application tourne dans un conteneur Docker sur une VM Azure,
 derrière un Load Balancer. Elle utilise Azure Table Storage et Azure Blob Storage via une Managed Identity.
 
+L'infrastructure (Terraform, VM, Load Balancer, stockage, Key Vault) et le contrat d'interface entre l'application
+et l'infrastructure sont dans le dépôt
+[PROJET_Cloud_Computing_Group17_Infrastructure](https://github.com/FOGUERAYAN/PROJET_Cloud_Computing_Group17_Infrastructure).
+
 ## Fonctionnalités
 
 - Mise en page sur 1200 px : bandeau bleu nuit en tête de chaque page, puis deux colonnes sur ordinateur
@@ -173,6 +177,61 @@ Les organismes, les sites de logement et les associations sont représentés par
 Couleur : primaire pour les démarches, alerte pour l'entraide, bleu nuit pour le logement.
 Cap90 est un projet étudiant indépendant, sans lien avec les organismes cités.
 
+## Coffre-fort
+
+Chaque utilisateur dépose ses justificatifs (PDF, JPG ou PNG, 10 Mo au maximum) dans le conteneur Blob privé
+`coffre`, sous son propre préfixe : `<id utilisateur>/<identifiant aléatoire>`. Le nom d'origine est gardé dans
+les métadonnées du blob et rendu au téléchargement (en-tête `Content-Disposition`).
+
+- L'extension et la signature réelle du fichier sont vérifiées (un programme renommé en `.pdf` est refusé).
+- Liste, téléchargement et suppression passent toujours par l'application, qui ne lit que le préfixe
+  de l'utilisateur connecté. Le conteneur n'est jamais exposé directement.
+- "Supprimer mes données" (Mon profil) efface aussi tous les fichiers du coffre.
+- Pour la démonstration, n'utiliser que de faux documents.
+
+### Lien de partage de 24 h
+
+Le mode est choisi automatiquement selon la connexion au stockage :
+
+| Environnement | Lien | Fonctionnement |
+| --- | --- | --- |
+| Azure (`STORAGE_MODE=azure`) | User Delegation SAS | L'application obtient une clé de délégation avec `get_user_delegation_key` grâce à la Managed Identity (`DefaultAzureCredential`), puis signe une SAS en lecture seule, HTTPS uniquement, pour un seul blob, qui expire au bout de 24 h. Aucune clé de compte n'est utilisée. |
+| Azurite ou mémoire | Lien interne signé | Azurite ne gère pas la délégation Microsoft Entra ID. L'application crée un jeton signé avec `itsdangerous` et `SECRET_KEY`, valable 24 h, servi par `/partage/<jeton>` en lecture seule. |
+
+Supprimer le fichier rend le lien inutilisable avant la fin des 24 h.
+
+### Droits à donner sur Azure (RBAC)
+
+Rôles à attribuer à la Managed Identity de la VM, au niveau du compte de stockage.
+Aucune clé de compte n'est utilisée : sans ces trois rôles, l'application ne peut pas fonctionner sur Azure.
+
+| Rôle | Utilité dans Cap90 |
+| --- | --- |
+| Storage Blob Data Contributor | Lire, écrire et supprimer les blobs : conteneur `medias-lille` (photos) et conteneur `coffre` (justificatifs). |
+| Storage Blob Delegator | Obtenir la clé de délégation (`get_user_delegation_key`) pour signer les liens de partage de 24 h (User Delegation SAS). |
+| Storage Table Data Contributor | Créer et lire les tables `profils`, `etapes`, `annonces` et `heures`, et y écrire les données. |
+
+Côté infrastructure, l'accès anonyme aux blobs doit être désactivé au niveau du compte de stockage
+(Terraform : `allow_nested_items_to_be_public = false`).
+
+## Mes démarches et notifications
+
+- La page des démarches s'appelle "Mes démarches". Son adresse reste `/planning`, et `/mes-demarches`
+  y redirige (redirection temporaire 302).
+- La page Notifications (cloche en haut à droite, avec le nombre d'alertes) est calculée à l'affichage,
+  sans base de données : échéances à moins de 7 jours ou dépassées, distributions d'entraide du jour
+  et du lendemain, pièces encore à préparer pour la prochaine démarche. Pas encore d'e-mail.
+
+## Vérifier les liens officiels
+
+```
+python scripts/verifier_liens.py
+```
+
+Le script teste chaque lien des données et signale les erreurs (403, 404), les redirections vers l'accueil
+et les pages introuvables. Deux sites (CAF et Lokaviz) répondent par une page anti-robot : leurs liens restent
+sur l'accueil et doivent être vérifiés à la main dans un navigateur.
+
 ## Lancer les tests
 
 Les tests n'ont pas besoin d'Azurite : ils utilisent le stockage en mémoire.
@@ -207,15 +266,57 @@ Les données sont perdues à l'arrêt.
 | Variable | Obligatoire | Description |
 | --- | --- | --- |
 | `SECRET_KEY` | Oui | Clé de signature des sessions Flask. Longue et aléatoire, jamais versionnée. |
-| `APP_PORT` | Non | Port de la machine hôte utilisé par docker compose (8000 par défaut). |
+| `APP_PORT` | Non | Port de la machine hôte utilisé par docker compose (8000 par défaut). Hors contrat, absent de `.env.example`. |
 | `STORAGE_MODE` | Non | `memoire` (défaut), `azurite` (local) ou `azure` (Managed Identity). |
-| `AZURE_STORAGE_CONNECTION_STRING` | En mode `azurite` | Toujours `UseDevelopmentStorage=true`. Aucune clé de compte. |
+| `AZURE_STORAGE_CONNECTION_STRING` | En mode `azurite` | Toujours `UseDevelopmentStorage=true`, fournie directement par `docker-compose.yml`. Hors contrat, absente de `.env.example`. |
 | `PHOTOS_CONTACT` | Pour le script de photos | Contact de l'équipe envoyé à Wikimedia Commons. Jamais versionné. |
 | `AZURE_STORAGE_ACCOUNT_NAME` | En mode `azure` | Nom du compte de stockage. L'authentification passe par `DefaultAzureCredential`. |
 
-Prévues par le contrat d'interface avec l'infrastructure, pas encore lues par le code : `KEY_VAULT_URL` (URL du Key Vault) et `APPLICATIONINSIGHTS_CONNECTION_STRING` (télémétrie Application Insights).
+Prévues par le [contrat d'interface avec l'infrastructure](https://github.com/FOGUERAYAN/PROJET_Cloud_Computing_Group17_Infrastructure), pas encore lues par le code : `KEY_VAULT_URL` (URL du Key Vault) et `APPLICATIONINSIGHTS_CONNECTION_STRING` (télémétrie Application Insights).
+
+`.env.example` contient exactement les variables du contrat : `STORAGE_MODE`, `AZURE_STORAGE_ACCOUNT_NAME`,
+`SECRET_KEY`, `KEY_VAULT_URL`, `APPLICATIONINSIGHTS_CONNECTION_STRING` et `PHOTOS_CONTACT`.
+Le port de l'application est fixé à 8000 dans le `Dockerfile`.
 
 Aucun secret n'est écrit dans le code. Le fichier `.env` est ignoré par git et par Docker.
+
+### Variables attendues sur la VM Azure
+
+Le conteneur lit uniquement ces variables. Les noms doivent être écrits exactement ainsi
+(lus dans `app/config.py`) :
+
+| Variable | Valeur sur la VM | Origine |
+| --- | --- | --- |
+| `SECRET_KEY` | Chaîne longue et aléatoire | Secret de Key Vault, lu par la VM au démarrage. Jamais dans un fichier versionné ni dans l'image. |
+| `STORAGE_MODE` | `azure` | Valeur fixe. |
+| `AZURE_STORAGE_ACCOUNT_NAME` | Nom du compte de stockage, par exemple `stcap90` (sans URL ni clé) | Sortie Terraform du compte de stockage. |
+| `KEY_VAULT_URL` | URL du Key Vault | Prévue par le contrat, pas encore lue par l'application : `SECRET_KEY` arrive déjà par variable d'environnement. |
+| `APPLICATIONINSIGHTS_CONNECTION_STRING` | Chaîne de connexion Application Insights | Prévue par le contrat, pas encore lue par l'application. |
+
+À ne pas définir sur Azure : `AZURE_STORAGE_CONNECTION_STRING` (réservée à Azurite), `APP_PORT` (docker compose)
+et `PHOTOS_CONTACT` (script local).
+
+Si la VM utilise une identité managée **attribuée par l'utilisateur** (et non celle attribuée par le système),
+`DefaultAzureCredential` doit aussi recevoir `AZURE_CLIENT_ID` (identifiant client de cette identité) pour savoir
+laquelle utiliser. Avec l'identité attribuée par le système, rien à ajouter.
+
+Exemple de lancement sur la VM, sans écrire le secret dans la commande ni dans un fichier versionné :
+
+```
+docker run -d --restart unless-stopped -p 8000:8000 \
+  -e SECRET_KEY -e STORAGE_MODE=azure -e AZURE_STORAGE_ACCOUNT_NAME \
+  <registre>/cap90-app:<version>
+```
+
+(`-e SECRET_KEY` sans valeur reprend la variable déjà chargée depuis Key Vault dans l'environnement de la VM.)
+La sonde de santé du Load Balancer vise `/health` sur le port 8000.
+
+## Image Docker
+
+L'image part de `python:3.12.16-slim-trixie` : version exacte de Python (3.12.16) et de Debian (13, trixie),
+pour que deux constructions donnent le même résultat. On met cette version à jour volontairement
+(changer le tag, reconstruire, relancer les tests), au lieu de suivre automatiquement `python:3.12-slim`.
+L'image tourne avec un utilisateur non root, expose le port 8000 et contient un `HEALTHCHECK` sur `/health`.
 
 ## Modèle de données (Azure Table Storage)
 
@@ -238,4 +339,4 @@ Le workflow [`ci.yml`](.github/workflows/ci.yml) s'exécute sur chaque Pull Requ
 | `docker-build` | construction de l'image Docker |
 | `gitleaks` | recherche de secrets dans tout l'historique Git |
 
-La publication de l'image dans Azure Container Registry sera ajoutée si l'authentification GitHub Actions → Azure (OIDC) est autorisée sur Azure for Students.
+La publication de l'image dans Azure Container Registry sera ajoutée si l'authentification de GitHub Actions vers Azure (OIDC) est autorisée sur Azure for Students.

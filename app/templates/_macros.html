@@ -101,7 +101,7 @@
   <a class="lien-fort" href="{{ url_for('planning.index') }}#{{ prochaine.code }}">Voir l'étape <i class="ti ti-arrow-narrow-right" aria-hidden="true"></i></a>
   {% else %}
   <h2 id="titre-prochaine-{{ classe or 'carte' }}">Toutes tes démarches sont faites</h2>
-  <p>Bravo, ton planning est terminé.</p>
+  <p>Bravo, toutes tes démarches sont faites.</p>
   {% endif %}
 </section>
 {% endmacro %}
@@ -142,7 +142,7 @@
 {% if avec_prochaine %}{{ carte_prochaine(d.progression.prochaine, "laterale") }}{% endif %}
 {% else %}
 <section class="carte">
-  <p>Crée ton profil pour obtenir ton planning personnalisé.</p>
+  <p>Crée ton profil pour obtenir tes démarches personnalisées.</p>
   <a class="bouton" href="{{ url_for('profil.formulaire') }}"><i class="ti ti-user-plus" aria-hidden="true"></i> Créer mon profil</a>
 </section>
 {% endif %}

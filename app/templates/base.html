@@ -13,14 +13,14 @@
 <body>
   {% set section = request.blueprint %}
   {% set onglets_haut = [
-    ("planning", url_for("planning.index"), "calendar-event", "Planning"),
+    ("planning", url_for("planning.index"), "calendar-event", "Mes démarches"),
     ("lille", url_for("lille.index"), "map-2", "Lille"),
     ("travail", url_for("travail.index"), "briefcase", "Travailler"),
     ("solidarite", url_for("solidarite.index"), "heart-handshake", "Entraide"),
     ("coffre", url_for("coffre.index"), "lock", "Coffre-fort"),
   ] %}
   {% set onglets_bas = [
-    ("planning", url_for("planning.index"), "calendar-event", "Planning"),
+    ("planning", url_for("planning.index"), "calendar-event", "Mes démarches"),
     ("lille", url_for("lille.index"), "map-2", "Lille"),
     ("travail", url_for("travail.index"), "briefcase", "Travailler"),
     ("solidarite", url_for("solidarite.index"), "heart-handshake", "Entraide"),
@@ -48,10 +48,18 @@
           {% endif %}
         {% endfor %}
       </nav>
+      <div class="actions-entete">
+      <a class="cloche" href="{{ url_for('notifications.index') }}" {% if section == "notifications" %}aria-current="page"{% endif %}
+         aria-label="Notifications{% if nb_notifications %}, {{ nb_notifications }} alerte{{ 's' if nb_notifications > 1 }}{% else %}, aucune alerte{% endif %}"
+         title="Notifications">
+        <i class="ti ti-bell" aria-hidden="true"></i>
+        {% if nb_notifications %}<span class="compteur" aria-hidden="true">{{ nb_notifications if nb_notifications < 10 else "9+" }}</span>{% endif %}
+      </a>
       <a class="pastille-profil" href="{{ url_for('profil.formulaire') }}" {% if section == "profil" %}aria-current="page"{% endif %}
          aria-label="{{ 'Mon profil' if profil_connecte else 'Créer mon profil' }}" title="{{ 'Mon profil' if profil_connecte else 'Créer mon profil' }}">
         {% if initiales %}{{ initiales }}{% else %}<i class="ti ti-user" aria-hidden="true"></i>{% endif %}
       </a>
+      </div>
     </div>
   </header>
 

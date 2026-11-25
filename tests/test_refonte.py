@@ -214,8 +214,8 @@ def test_suppression_des_donnees(client, stockage):
     client.post("/profil", data=FORMULAIRE)
     id_utilisateur = id_session(client)
     client.post("/travailler", data={"mois": "2026-10", "heures": "20"})
-    stockage.coffre[f"{id_utilisateur}/passeport.pdf"] = b"pdf"
-    stockage.coffre["autre-utilisateur/bail.pdf"] = b"pdf"
+    stockage.deposer_fichier(id_utilisateur, "passeport.pdf", b"%PDF-1.4", "application/pdf")
+    autre = stockage.deposer_fichier("autre-utilisateur", "bail.pdf", b"%PDF-1.4", "application/pdf")
 
     assert client.get("/profil/supprimer").status_code == 200
     reponse = client.post("/profil/supprimer")
@@ -225,7 +225,8 @@ def test_suppression_des_donnees(client, stockage):
     assert not [k for k in stockage.tables[TABLE_ETAPES] if k[0] == id_utilisateur]
     assert not [k for k in stockage.tables[TABLE_HEURES] if k[0] == id_utilisateur]
     assert not [k for k in stockage.tables[TABLE_PROFILS] if k[1] == id_utilisateur]
-    assert list(stockage.coffre) == ["autre-utilisateur/bail.pdf"]
+    assert stockage.lister_fichiers(id_utilisateur) == []
+    assert [f["identifiant"] for f in stockage.lister_fichiers("autre-utilisateur")] == [autre["identifiant"]]
     assert id_session(client) is None
     assert client.get("/planning").headers["Location"].endswith("/profil")
 
@@ -255,7 +256,7 @@ def test_accueil_sans_et_avec_profil(client):
 
     client.post("/profil", data=FORMULAIRE)
     texte = client.get("/").get_data(as_text=True)
-    assert "Voir mon planning" in texte
+    assert "Voir mes démarches" in texte
     assert ">AD<" in texte.replace("\n", "").replace(" ", "")
     assert "Ta prochaine étape" in texte
     assert "Cette semaine à Lille" in texte

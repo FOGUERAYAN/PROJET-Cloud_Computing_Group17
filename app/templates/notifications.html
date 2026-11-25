@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "_macros.html" import bandeau, mise_en_page %}
+{% block titre %}Notifications | Cap90{% endblock %}
+{% block bandeau %}{{ bandeau("Notifications", "Ce qui demande ton attention aujourd'hui.") }}{% endblock %}
+{% block contenu %}
+{% call mise_en_page() %}
+<section class="carte" aria-labelledby="titre-notifications">
+  <h2 id="titre-notifications" class="visuellement-cache">Tes notifications</h2>
+  {% if notifications %}
+  <ul class="liste-notifications">
+    {% for n in notifications %}
+    <li class="notification notification-{{ n.niveau }}">
+      <i class="ti ti-{{ n.icone }} notification-icone" aria-hidden="true"></i>
+      <a href="{{ url_for(n.page ~ '.index') }}#{{ n.ancre }}">{{ n.texte }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <div class="a-jour">
+    <i class="ti ti-circle-check" aria-hidden="true"></i>
+    <p>Tu es à jour.</p>
+  </div>
+  {% endif %}
+  {% if not avec_profil %}
+  <p class="discret">Crée ton profil pour recevoir aussi les alertes sur tes démarches.
+    <a href="{{ url_for('profil.formulaire') }}">Créer mon profil</a></p>
+  {% endif %}
+</section>
+<p class="discret mention-bas"><i class="ti ti-mail" aria-hidden="true"></i> Les notifications par e-mail arriveront dans une prochaine version.</p>
+{% endcall %}
+{% endblock %}

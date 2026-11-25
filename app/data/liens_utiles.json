@@ -2,21 +2,21 @@
   {
     "titre": "Service-Public.fr",
     "sigle": "SP",
-    "url": "https://www.service-public.gouv.fr",
+    "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/N110",
     "description": "Le site officiel de l'administration française pour toutes tes démarches.",
     "theme": "papiers"
   },
   {
     "titre": "Administration des étrangers en France",
     "sigle": "AEF",
-    "url": "https://administration-etrangers-en-france.interieur.gouv.fr",
+    "url": "https://administration-etrangers-en-france.interieur.gouv.fr/particuliers/",
     "description": "Validation du visa, titre de séjour et suivi de tes demandes en ligne.",
     "theme": "papiers"
   },
   {
     "titre": "Ameli",
     "sigle": "Am",
-    "url": "https://www.ameli.fr",
+    "url": "https://www.ameli.fr/assure/droits-demarches/europe-international/protection-sociale-france/vous-venez-etudier-en-france",
     "description": "L'Assurance Maladie : immatriculation, carte Vitale et remboursements.",
     "theme": "sante"
   },
@@ -44,14 +44,14 @@
   {
     "titre": "Crous Lille Nord-Pas de Calais",
     "sigle": "Crous",
-    "url": "https://www.crous-lille.fr",
+    "url": "https://www.crous-lille.fr/etudes-internationales/",
     "description": "Bourses, restauration universitaire et aides du Crous de Lille.",
     "theme": "bons-plans"
   },
   {
     "titre": "Etudiant.gouv.fr",
     "sigle": "Et",
-    "url": "https://www.etudiant.gouv.fr",
+    "url": "https://www.etudiant.gouv.fr/fr/etudiants-internationaux",
     "description": "Le portail de la vie étudiante : aides, logement, santé et jobs.",
     "theme": "bons-plans"
   },

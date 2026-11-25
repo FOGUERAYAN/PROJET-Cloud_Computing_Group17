@@ -1,4 +1,6 @@
-FROM python:3.12-slim
+# Version exacte (Python 3.12.16, Debian 13 trixie) pour des constructions reproductibles.
+# Pour monter de version : changer ce tag, reconstruire, relancer les tests.
+FROM python:3.12.16-slim-trixie
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \

@@ -1,4 +1,4 @@
-"""Rétroplanning : étapes groupées par échéance, pièces à préparer, validation des étapes."""
+"""Mes démarches (rétroplanning) : étapes groupées par échéance, pièces à préparer, validation des étapes."""
 
 from datetime import date
 
@@ -45,6 +45,12 @@ def vue_etape(etape: dict, details: dict, lieux: list, jour: date) -> dict:
         "conseil": detail.get("conseil", ""),
         "lieu": trouver(lieux, detail.get("lieu_id", "")),
     }
+
+
+@bp.get("/mes-demarches")
+def alias():
+    """Adresse lisible de la page. Redirection temporaire (302) : /planning reste l'adresse principale."""
+    return redirect(url_for("planning.index"))
 
 
 @bp.get("/planning")

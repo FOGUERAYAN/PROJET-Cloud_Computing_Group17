@@ -4,8 +4,8 @@
 {% block bandeau %}
 {% call bandeau(
   "Tes 90 premiers jours, étape par étape" if suivi else "Bienvenue sur Cap90",
-  "Ton planning, tes démarches et les bons plans de la métropole au même endroit." if suivi
-    else "Cap90 t'accompagne pendant tes 90 premiers jours à Lille. Réponds à 5 questions et obtiens un planning daté de tes démarches.",
+  "Tes démarches, ton suivi et les bons plans de la métropole au même endroit." if suivi
+    else "Cap90 t'accompagne pendant tes 90 premiers jours à Lille. Réponds à 5 questions et obtiens la liste datée de tes démarches.",
   lieu=grand_place,
   surtitre="Bienvenue à Lille"
 ) %}
@@ -14,7 +14,7 @@
     {{ anneau(suivi.pourcentage, suivi.pourcentage ~ " %", suivi.faites ~ " démarches faites sur " ~ suivi.total, "anneau-clair") }}
     <p><strong>{{ suivi.faites }} sur {{ suivi.total }}</strong> démarches faites<br><span>Jour {{ suivi.jour }} sur 90</span></p>
   </div>
-  <a class="bouton bouton-clair" href="{{ url_for('planning.index') }}"><i class="ti ti-calendar-event" aria-hidden="true"></i> Voir mon planning</a>
+  <a class="bouton bouton-clair" href="{{ url_for('planning.index') }}"><i class="ti ti-calendar-event" aria-hidden="true"></i> Voir mes démarches</a>
   {% else %}
   <a class="bouton bouton-clair" href="{{ url_for('profil.formulaire') }}"><i class="ti ti-user-plus" aria-hidden="true"></i> Créer mon profil</a>
   {% endif %}
@@ -23,7 +23,7 @@
 
 {% block contenu %}
 {% set tuiles = [
-  ("planning.index", "calendar-event", "Mon planning", "Tes démarches datées."),
+  ("planning.index", "calendar-event", "Mes démarches", "Tes démarches datées."),
   ("lille.se_loger", "home", "Se loger", "Sites sûrs et anti-arnaques."),
   ("lille.lieux_utiles", "building-community", "Lieux utiles", "CPAM, CAF, Crous."),
   ("lille.decouvrir", "building-castle", "Découvrir Lille", "À voir, manger, sortir."),
@@ -49,7 +49,7 @@
   <section class="carte carte-prochaine">
     <p class="surtitre-carte"><i class="ti ti-target-arrow" aria-hidden="true"></i> Ta prochaine étape</p>
     <h2>Créer ton profil</h2>
-    <p>5 questions suffisent pour calculer ton planning.</p>
+    <p>5 questions suffisent pour calculer tes démarches.</p>
     <a class="lien-fort" href="{{ url_for('profil.formulaire') }}">Commencer <i class="ti ti-arrow-narrow-right" aria-hidden="true"></i></a>
   </section>
   {% endif %}
