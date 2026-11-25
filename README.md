@@ -198,12 +198,14 @@ Supprimer le fichier rend le lien inutilisable avant la fin des 24 h.
 
 ### Droits à donner sur Azure (RBAC)
 
-Rôles à attribuer à la Managed Identity de la VM, au niveau du compte de stockage :
+Rôles à attribuer à la Managed Identity de la VM, au niveau du compte de stockage.
+Aucune clé de compte n'est utilisée : sans ces trois rôles, l'application ne peut pas fonctionner sur Azure.
 
-| Rôle | Utilité |
+| Rôle | Utilité dans Cap90 |
 | --- | --- |
-| Storage Blob Data Contributor | Lire, écrire et supprimer les blobs (médias et coffre-fort). |
-| Storage Blob Delegator | Obtenir la clé de délégation pour signer les liens de partage (User Delegation SAS). |
+| Storage Blob Data Contributor | Lire, écrire et supprimer les blobs : conteneur `medias-lille` (photos) et conteneur `coffre` (justificatifs). |
+| Storage Blob Delegator | Obtenir la clé de délégation (`get_user_delegation_key`) pour signer les liens de partage de 24 h (User Delegation SAS). |
+| Storage Table Data Contributor | Créer et lire les tables `profils`, `etapes`, `annonces` et `heures`, et y écrire les données. |
 
 Côté infrastructure, l'accès anonyme aux blobs doit être désactivé au niveau du compte de stockage
 (Terraform : `allow_nested_items_to_be_public = false`).
@@ -267,6 +269,42 @@ Les données sont perdues à l'arrêt.
 | `AZURE_STORAGE_ACCOUNT_NAME` | En mode `azure` | Nom du compte de stockage. L'authentification passe par `DefaultAzureCredential`. |
 
 Aucun secret n'est écrit dans le code. Le fichier `.env` est ignoré par git et par Docker.
+
+### Variables attendues sur la VM Azure
+
+Le conteneur lit uniquement ces variables. Les noms doivent être écrits exactement ainsi
+(lus dans `app/config.py`) :
+
+| Variable | Valeur sur la VM | Origine |
+| --- | --- | --- |
+| `SECRET_KEY` | Chaîne longue et aléatoire | Secret de Key Vault, lu par la VM au démarrage. Jamais dans un fichier versionné ni dans l'image. |
+| `STORAGE_MODE` | `azure` | Valeur fixe. |
+| `AZURE_STORAGE_ACCOUNT_NAME` | Nom du compte de stockage, par exemple `stcap90` (sans URL ni clé) | Sortie Terraform du compte de stockage. |
+
+À ne pas définir sur Azure : `AZURE_STORAGE_CONNECTION_STRING` (réservée à Azurite), `APP_PORT` (docker compose)
+et `PHOTOS_CONTACT` (script local).
+
+Si la VM utilise une identité managée **attribuée par l'utilisateur** (et non celle attribuée par le système),
+`DefaultAzureCredential` doit aussi recevoir `AZURE_CLIENT_ID` (identifiant client de cette identité) pour savoir
+laquelle utiliser. Avec l'identité attribuée par le système, rien à ajouter.
+
+Exemple de lancement sur la VM, sans écrire le secret dans la commande ni dans un fichier versionné :
+
+```
+docker run -d --restart unless-stopped -p 8000:8000 \
+  -e SECRET_KEY -e STORAGE_MODE=azure -e AZURE_STORAGE_ACCOUNT_NAME \
+  <registre>/cap90-app:<version>
+```
+
+(`-e SECRET_KEY` sans valeur reprend la variable déjà chargée depuis Key Vault dans l'environnement de la VM.)
+La sonde de santé du Load Balancer vise `/health` sur le port 8000.
+
+## Image Docker
+
+L'image part de `python:3.12.16-slim-trixie` : version exacte de Python (3.12.16) et de Debian (13, trixie),
+pour que deux constructions donnent le même résultat. On met cette version à jour volontairement
+(changer le tag, reconstruire, relancer les tests), au lieu de suivre automatiquement `python:3.12-slim`.
+L'image tourne avec un utilisateur non root, expose le port 8000 et contient un `HEALTHCHECK` sur `/health`.
 
 ## Modèle de données (Azure Table Storage)
 
