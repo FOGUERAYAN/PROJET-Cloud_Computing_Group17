@@ -7,6 +7,10 @@ Un coffre-fort de justificatifs et un espace de dons entre habitants arriveront 
 Projet de Cloud Computing, JUNIA ISEN. L'application tourne dans un conteneur Docker sur une VM Azure,
 derrière un Load Balancer. Elle utilise Azure Table Storage et Azure Blob Storage via une Managed Identity.
 
+L'infrastructure (Terraform, VM, Load Balancer, stockage, Key Vault) et le contrat d'interface entre l'application
+et l'infrastructure sont dans le dépôt
+[PROJET_Cloud_Computing_Group17_Infrastructure](https://github.com/FOGUERAYAN/PROJET_Cloud_Computing_Group17_Infrastructure).
+
 ## Fonctionnalités
 
 - Mise en page sur 1200 px : bandeau bleu nuit en tête de chaque page, puis deux colonnes sur ordinateur
@@ -268,7 +272,7 @@ Les données sont perdues à l'arrêt.
 | `PHOTOS_CONTACT` | Pour le script de photos | Contact de l'équipe envoyé à Wikimedia Commons. Jamais versionné. |
 | `AZURE_STORAGE_ACCOUNT_NAME` | En mode `azure` | Nom du compte de stockage. L'authentification passe par `DefaultAzureCredential`. |
 
-Prévues par le contrat d'interface avec l'infrastructure, pas encore lues par le code : `KEY_VAULT_URL` (URL du Key Vault) et `APPLICATIONINSIGHTS_CONNECTION_STRING` (télémétrie Application Insights).
+Prévues par le [contrat d'interface avec l'infrastructure](https://github.com/FOGUERAYAN/PROJET_Cloud_Computing_Group17_Infrastructure), pas encore lues par le code : `KEY_VAULT_URL` (URL du Key Vault) et `APPLICATIONINSIGHTS_CONNECTION_STRING` (télémétrie Application Insights).
 
 `.env.example` contient exactement les variables du contrat : `STORAGE_MODE`, `AZURE_STORAGE_ACCOUNT_NAME`,
 `SECRET_KEY`, `KEY_VAULT_URL`, `APPLICATIONINSIGHTS_CONNECTION_STRING` et `PHOTOS_CONTACT`.
@@ -335,4 +339,4 @@ Le workflow [`ci.yml`](.github/workflows/ci.yml) s'exécute sur chaque Pull Requ
 | `docker-build` | construction de l'image Docker |
 | `gitleaks` | recherche de secrets dans tout l'historique Git |
 
-La publication de l'image dans Azure Container Registry sera ajoutée si l'authentification GitHub Actions → Azure (OIDC) est autorisée sur Azure for Students.
+La publication de l'image dans Azure Container Registry sera ajoutée si l'authentification de GitHub Actions vers Azure (OIDC) est autorisée sur Azure for Students.
