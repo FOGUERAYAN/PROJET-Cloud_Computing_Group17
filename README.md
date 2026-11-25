@@ -208,6 +208,24 @@ Rôles à attribuer à la Managed Identity de la VM, au niveau du compte de stoc
 Côté infrastructure, l'accès anonyme aux blobs doit être désactivé au niveau du compte de stockage
 (Terraform : `allow_nested_items_to_be_public = false`).
 
+## Mes démarches et notifications
+
+- La page des démarches s'appelle "Mes démarches". Son adresse reste `/planning`, et `/mes-demarches`
+  y redirige (redirection temporaire 302).
+- La page Notifications (cloche en haut à droite, avec le nombre d'alertes) est calculée à l'affichage,
+  sans base de données : échéances à moins de 7 jours ou dépassées, distributions d'entraide du jour
+  et du lendemain, pièces encore à préparer pour la prochaine démarche. Pas encore d'e-mail.
+
+## Vérifier les liens officiels
+
+```
+python scripts/verifier_liens.py
+```
+
+Le script teste chaque lien des données et signale les erreurs (403, 404), les redirections vers l'accueil
+et les pages introuvables. Deux sites (CAF et Lokaviz) répondent par une page anti-robot : leurs liens restent
+sur l'accueil et doivent être vérifiés à la main dans un navigateur.
+
 ## Lancer les tests
 
 Les tests n'ont pas besoin d'Azurite : ils utilisent le stockage en mémoire.
