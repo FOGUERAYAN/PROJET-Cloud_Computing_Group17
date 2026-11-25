@@ -107,7 +107,7 @@ def test_donnees_linkee_et_cop1():
     linkee = entrees["Linkee Lille"]
     assert [c["jour_semaine"] for c in linkee["creneaux"]] == ["mardi", "mercredi"]
     assert linkee["creneaux"][0]["adresse"] == "Bazaar St-So, 292 rue Camille Guérin, Lille"
-    assert linkee["lien_inscription"] == "https://linkee.fillout.com/inscriptions"
+    assert linkee["lien_inscription"] == "https://www.linkee.co"  # ancien formulaire inactif
     cop1 = entrees["Cop1 Lille"]
     assert cop1["frequence"] == "une semaine sur deux"
     assert cop1["creneaux"][0]["jour_semaine"] == "jeudi"

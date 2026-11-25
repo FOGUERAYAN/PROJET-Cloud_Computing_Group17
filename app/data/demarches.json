@@ -14,7 +14,7 @@
       "Adresse en France",
       "Carte bancaire pour la taxe"
     ],
-    "lien_officiel": "https://administration-etrangers-en-france.interieur.gouv.fr",
+    "lien_officiel": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2231",
     "lieu_id": "",
     "conseil": "Fais la démarche en ligne dès que tu as une adresse.",
     "a_verifier": true
@@ -35,7 +35,7 @@
       "Justificatif de domicile",
       "RIB"
     ],
-    "lien_officiel": "https://www.service-public.fr/particuliers/vosdroits/F34703",
+    "lien_officiel": "https://www.service-public.gouv.fr/particuliers/vosdroits/F12859",
     "lieu_id": "cpam",
     "conseil": "Garde une copie de chaque document envoyé.",
     "a_verifier": true
@@ -54,7 +54,7 @@
       "Pièce d'identité",
       "Justificatif de domicile"
     ],
-    "lien_officiel": "https://www.service-public.fr/particuliers/vosdroits/F2369",
+    "lien_officiel": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2369",
     "lieu_id": "",
     "conseil": "En cas de refus, tu peux demander le droit au compte.",
     "a_verifier": true
@@ -74,7 +74,7 @@
       "RIB",
       "Titre de séjour ou visa validé"
     ],
-    "lien_officiel": "https://www.caf.fr",
+    "lien_officiel": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1563",
     "lieu_id": "caf",
     "conseil": "La demande se fait en ligne sur le site de la CAF.",
     "a_verifier": true
@@ -92,7 +92,7 @@
     "pieces": [
       "Carte Vitale ou attestation de droits"
     ],
-    "lien_officiel": "https://www.service-public.fr/particuliers/vosdroits/F163",
+    "lien_officiel": "https://www.service-public.gouv.fr/particuliers/vosdroits/F163",
     "lieu_id": "",
     "conseil": "Le médecin fait la déclaration lors d'une consultation.",
     "a_verifier": true
@@ -111,7 +111,7 @@
       "Bail ou contrat de location",
       "Pièce d'identité"
     ],
-    "lien_officiel": "https://www.service-public.fr/particuliers/vosdroits/F2033",
+    "lien_officiel": "https://www.service-public.gouv.fr/particuliers/vosdroits/F31300",
     "lieu_id": "",
     "conseil": "Le propriétaire peut demander l'attestation à la remise des clés.",
     "a_verifier": true

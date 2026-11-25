@@ -19,7 +19,7 @@
     ],
     "frequence": "chaque semaine",
     "conditions": "Viens avec un sac et ta carte étudiante ou un certificat de scolarité à jour.",
-    "lien_inscription": "https://linkee.fillout.com/inscriptions",
+    "lien_inscription": "https://www.linkee.co",
     "verifie_le": "",
     "a_verifier": true
   },
@@ -64,7 +64,7 @@
     "creneaux": [],
     "frequence": "variable",
     "conditions": "",
-    "lien_inscription": "https://www.crous-lille.fr",
+    "lien_inscription": "https://www.crous-lille.fr/se-restaurer/",
     "verifie_le": "",
     "a_verifier": true
   }
