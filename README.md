@@ -290,7 +290,7 @@ Le conteneur lit uniquement ces variables. Les noms doivent être écrits exacte
 | --- | --- | --- |
 | `SECRET_KEY` | Chaîne longue et aléatoire | Secret de Key Vault, lu par la VM au démarrage. Jamais dans un fichier versionné ni dans l'image. |
 | `STORAGE_MODE` | `azure` | Valeur fixe. |
-| `AZURE_STORAGE_ACCOUNT_NAME` | Nom du compte de stockage, par exemple `stcap90` (sans URL ni clé) | Sortie Terraform du compte de stockage. |
+| `AZURE_STORAGE_ACCOUNT_NAME` | Nom du compte de stockage, `stcap90prodfrc` (sans URL ni clé) | Sortie Terraform du compte de stockage. |
 | `KEY_VAULT_URL` | URL du Key Vault | Prévue par le contrat, pas encore lue par l'application : `SECRET_KEY` arrive déjà par variable d'environnement. |
 | `APPLICATIONINSIGHTS_CONNECTION_STRING` | Chaîne de connexion Application Insights | Prévue par le contrat, pas encore lue par l'application. |
 
