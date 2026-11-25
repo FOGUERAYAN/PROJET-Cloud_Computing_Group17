@@ -8,6 +8,7 @@ from app.routes.health import bp as health_bp
 from app.routes.liens import bp as liens_bp
 from app.routes.lille import bp as lille_bp
 from app.routes.medias import bp as medias_bp
+from app.routes.notifications import bp as notifications_bp
 from app.routes.partage import bp as partage_bp
 from app.routes.planning import bp as planning_bp
 from app.routes.profil import bp as profil_bp
@@ -26,6 +27,7 @@ BLUEPRINTS = (
     coffre_bp,
     partage_bp,
     solidarite_bp,
+    notifications_bp,
     health_bp,
 )
 

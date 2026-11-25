@@ -6,6 +6,7 @@ from flask import current_app, g, session
 
 from app.services.entraide import prochains_creneaux
 from app.services.liens import filtrer_par_themes
+from app.services.notifications import calculer as calculer_notifications
 from app.services.planning import jour_courant, jours_restants
 from app.services.referentiels import nom_commune, nom_langue
 from app.services.sigles import famille_du_theme
@@ -88,6 +89,18 @@ def semaine_a_lille(limite: int = 3) -> list:
     return prochains_creneaux(current_app.extensions["entraide"], aujourd_hui(), limite)
 
 
+def notifications_courantes() -> list[dict]:
+    """Notifications de l'utilisateur courant, calculées une seule fois par requête."""
+    if "notifications" not in g:
+        g.notifications = calculer_notifications(
+            etapes_courantes(),
+            current_app.extensions["catalogue"],
+            current_app.extensions["entraide"],
+            aujourd_hui(),
+        )
+    return g.notifications
+
+
 def donnees_laterales(themes=()) -> dict:
     """Contenu de la colonne latérale des pages de module."""
     return {
@@ -113,4 +126,8 @@ def installer(app) -> None:
     @app.context_processor
     def utilisateur():
         profil = profil_courant()
-        return {"profil_connecte": profil, "initiales": initiales(profil)}
+        return {
+            "profil_connecte": profil,
+            "initiales": initiales(profil),
+            "nb_notifications": len(notifications_courantes()),
+        }
