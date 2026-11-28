@@ -67,7 +67,7 @@ app/
   static/css/        theme.css (palette) et app.css (mise en page)
 medias/              photos à envoyer dans le conteneur Blob
 scripts/             charger_medias.py, telecharger_photos.py
-function/            future Azure Function (vide)
+function/            Azure Function des tâches nocturnes (purge des annonces, rappels) : voir function/README.md
 tests/               tests pytest, avec le stockage en mémoire
 ```
 
